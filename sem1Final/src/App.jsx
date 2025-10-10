@@ -7,7 +7,7 @@ var themeColor = "rgb(0, 140, 255)"
 function NavigationBar({nameColor, strokeColor, setStrokeColor}) {
   const changeColor = (pageLabel) => {
     setStrokeColor(nameColor[pageLabel]);
-    themeColor = strokeColor
+    themeColor = nameColor[pageLabel]
   };
 
   return (
@@ -37,7 +37,7 @@ function WikiPage({imgUrl, description, stats}) {
         boxSizing: 'border-box',
         transition: 'border-color 0.3s ease-in-out'
       }}>
-        <img 
+        <img className='leftPageImage'
           src={imgUrl}
           alt="Item Image"
         />
@@ -63,6 +63,9 @@ function WikiPage({imgUrl, description, stats}) {
   );
 }
 
+// Add req and rec here for the roblox API
+
+// Final output
 function App({imgUrl, description, stats})  {
   const [strokeColor, setStrokeColor] = useState("rgb(0, 140, 255)");
   const nameColor = {
