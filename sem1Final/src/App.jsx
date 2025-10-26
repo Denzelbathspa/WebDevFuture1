@@ -1,84 +1,68 @@
 import { useState } from 'react'
 import './App.css'
 
-var themeColor = "rgb(0, 140, 255)"
+function App() {
+  const [bgColor, setBgColor] = useState("white")
+
+  function setBGColor(color) {
+    setBgColor(color)
+  }
+
+  return (
+    <div className="App">
+      <NavigationBar setBGColor={setBGColor} />
+      <GameDescription />
+      <RobloxLogo />
+    </div>
+  )
+}
 
 // Navigation Bar
-function NavigationBar({nameColor, strokeColor, setStrokeColor}) {
-  const changeColor = (pageLabel) => {
-    setStrokeColor(nameColor[pageLabel]);
-    themeColor = nameColor[pageLabel]
-  };
-
+function NavigationBar({ setBGColor }) {
   return (
-    <nav className="nav-bar" 
-      style={{ 
-        borderRight: `4px solid ${themeColor}`, 
-        padding: '20px',
-        boxSizing: 'border-box',
-        transition: 'border-color 0.3s ease-in-out'
-      }}>
-      <ul>
-        <li onClick={() => changeColor("HOME")}>HOME</li>
-        <li onClick={() => changeColor("WIKI")}>WIKI</li>
-      </ul>
-    </nav>
-  );
+    <div className="class_NavBar">
+      <nav>
+          <button onClick={() => setBGColor("rgb(0, 140, 255)")}>HOME</button>
+          <button onClick={() => setBGColor("rgb(255, 140, 255)")}>LEADERBOARDS</button>
+          <button onClick={() => setBGColor("rgb(0, 140, 0)")}>USERNAME1234</button>
+          <button className='class_AdminButton' onClick={() => setBGColor("rgb(0, 140, 0)")}>ADMIN PANEL</button>
+      </nav>
+    </div>
+  )
 }
 
-// Pages
-function WikiPage({imgUrl, description, stats}) {
-  return (
-    <div className="Wiki">
-      <div className="LeftPage"
-      style={{ 
-        border: `4px solid ${themeColor}`, 
-        padding: '20px',
-        boxSizing: 'border-box',
-        transition: 'border-color 0.3s ease-in-out'
-      }}>
-        <img className='leftPageImage'
-          src={imgUrl}
-          alt="Item Image"
-        />
-        <p>
-          DESCRIPTION: <br></br>
-          {description}
-        </p>
-      </div>
+// Game Description
+function GameDescription() {
+  const text = "Sometimes, the simple act of walking can be surprisingly therapeutic. Here, that calm experience is taken to the next level — combining relaxation with fun, competition, and a touch of creativity. Enjoy the scenery, climb the leaderboards, and unwind as you walk your way to victory. Are you ready for a relaxing yet competitive adventure? Come and ";
 
-      <div className="RightPage"
-      style={{ 
-        border: `4px solid ${themeColor}`, 
-        padding: '20px',
-        boxSizing: 'border-box',
-        transition: 'border-color 0.3s ease-in-out'
-      }}>
-        <h1>Stats:</h1>
-        <p>
-          {stats}
-        </p>
-      </div>
+  const words = text.split(" ");
+
+  return (
+    <div className="class_GameDesc">
+      <p>
+        {words.map((word, index) => (
+          <span
+            key={index}
+            style={{ animationDelay: `${index * 0.05}s` }}
+            className="wordAnimation"
+          >
+            {word}&nbsp; 
+          </span>
+        ))}
+      <button className="class_PlayNow">PLAY NOW!</button>
+      </p>
     </div>
-  );
+  )
 }
 
-// Add req and rec here for the roblox API
-
-// Final output
-function App({imgUrl, description, stats})  {
-  const [strokeColor, setStrokeColor] = useState("rgb(0, 140, 255)");
-  const nameColor = {
-    HOME: "rgb(0, 140, 255)",
-    WIKI: "rgba(208, 255, 0, 1)",
-  }
+// Roblox Logo
+function RobloxLogo() {
   return (
-    <div>
-        <NavigationBar nameColor={nameColor} strokeColor={strokeColor} setStrokeColor={setStrokeColor} />
-        <WikiPage imgUrl={"https://images.all-free-download.com/images/thumbjpg/camera_test_apple_517290.jpg"} description={"It is an apple bru"} stats={"Its got a lot of nutrients and stuff"}/>
-
+    <div className='class_RobloxLogo'>
+      <img className='rbx_logo_upper' src='\src\assets\RobloxLogo_Upper.png'></img><br></br>
+      <img className='rbx_logo_lower' src='\src\assets\RobloxLogo_Lower.png'></img>
     </div>
-  );
+  )
 }
 
 export default App;

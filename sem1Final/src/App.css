@@ -1,90 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap');
+
 #root {
   /* Variables */
-  --NavWidth: 15%;
-  --fullWidth: min(1200px, 90vw)
+  --fullWidth: min(1200px, 90re);
+  --WhiteColor: 233, 227, 223;
+  --BlackColor: 0, 0, 0;
+  --OrangeColor: 255, 122, 48;
+  --BlueColor: 70, 92, 136;
   
   /* Aspect Ratio */
   aspect-ratio: 16 / 10;
   width: var(--fullWidth);
   height: auto;
 
-  /* Layout */
-  margin: 0 auto;
-  padding: 2rem;
+  /* Settings*/
   text-align: center;
+  font-family: 'Pixelify Sans', sans-serif;
 
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  /* Layout */
+  margin: 0;
+  padding: 2rem;
+  overflow: hidden;
   
-  background-color: #7e7e7e;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  background-color: rgba(var(--WhiteColor), 1) ;
 }
 
 /* Navigation Bar */
-.nav-bar {
-  position: fixed;    
-  left: 0;    
-  top: 0;
-  height: 100vh;
-  width: var(--NavWidth);
-  
+.class_NavBar {
   display: flex;
-  justify-content: center;
-  align-items: center;
 
-  background: rgb(33, 33, 33);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  background-color: rgba(var(--WhiteColor), 0) ;
 }
 
-.nav-bar ul {
+.class_NavBar button {
+  background-color: rgba(var(--WhiteColor), 0) ;
+  color: rgba(var(--BlackColor), 1) ;
+  font-size: 20px;
+}
+
+/* Home Page */
+.class_GameDesc p {
+  background-color: rgba(var(--WhiteColor), 0) ;
+  color: rgba(var(--BlackColor), 1) ;
+  font-size: 20px;
+  text-align: justify;
+
+  /* Layout */
+  max-height: 31%;
+  max-width: 57%;
+  margin-left: 10%;
+  margin-top: 10%;
+}
+
+.class_PlayNow {
+  background-color: rgba(var(--OrangeColor), 1) ;
+  color: rgba(var(--WhiteColor), 1) ;
+  font-size: 20px;
+
   padding: 0;
-  margin: 0;
-  text-align: center;
+
+  /* animation */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp_anim 0.5s forwards;
+  animation-delay: 3s;
 }
 
-.nav-bar li {
-  color: white;
-  list-style: none;
-
-  margin: 20px 0;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: color 0.3s ease;
+/* Individual Char Animation*/
+.wordAnimation {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp_anim 0.5s forwards;
 }
 
-.nav-bar li:hover {
-  color: #ffcc00;
+@keyframes fadeUp_anim {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Page Layout */
-.Wiki {
-  display: flex;
-  justify-content: space-evenly;
-  overflow: hidden;
+/* Rbx LOGO*/
+.class_RobloxLogo {
+  /* Layout */
+  transform: translateX(45%) translateY(-65%) rotate(21deg);
+}
+.class_RobloxLogo img{
+  filter: drop-shadow(4px 4px 5px rgba(0,0,0,0.5));
 
-  width: calc(var(--fullWidth) - var(--NavWidth));
-  height: 100vh;
-  margin-left: var(--NavWidth);
 }
 
-.LeftPage, .RightPage {
-  background-color: rgb(33, 33, 33);
-  padding: 5%;
-  
-  height: 80vh;
-  width: calc(50vw - var(--NavWidth));
+.rbx_logo_upper {
+  opacity: 0;
+  transform: translateY(-200px);
+  animation: MoveTo_Anim 5s forwards;
 }
 
-.leftPageImage {
-  width: 100%;
-  height: 50%;
-  object-fit: fill;
+.rbx_logo_lower {
+  opacity: 0;
+  transform: translateY(200px);
+  animation: MoveTo_Anim 5s forwards;
+}
+
+@keyframes MoveTo_Anim {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
