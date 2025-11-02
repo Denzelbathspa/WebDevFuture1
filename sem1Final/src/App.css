@@ -30,12 +30,23 @@
   display: flex;
 
   background-color: rgba(var(--WhiteColor), 0) ;
+  
+  transform: translateY(-200%);
+  animation: fadeUp_anim 3s forwards;
 }
 
 .class_NavBar button {
   background-color: rgba(var(--WhiteColor), 0) ;
   color: rgba(var(--BlackColor), 1) ;
   font-size: 20px;
+  
+}
+
+@keyframes NavAppear_anim {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Home Page */
@@ -84,7 +95,7 @@
 /* Rbx LOGO*/
 .class_RobloxLogo {
   /* Layout */
-  transform: translateX(45%) translateY(-65%) rotate(21deg);
+  transform: translateX(40%) translateY(-65%) rotate(21deg);
 }
 .class_RobloxLogo img{
   filter: drop-shadow(4px 4px 5px rgba(0,0,0,0.5));
@@ -107,5 +118,138 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Background Rects */
+.rect_1, .rect_2, .rect_3, .rect_4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  /* TEMPORARY - Make rectangles visible for debugging 
+  border: 3px solid red !important;
+  background: red !important;
+  opacity: 1 !important;
+  */
+}
+
+.rect_1 {
+  background: rgba(var(--OrangeColor), 1);
+  z-index: 4;
+  width: 26%;
+  height: 40%;
+  transform: translateX(150%) translateY(500%) rotate(21deg);
+  animation: rect_1Move 6s forwards;
+}
+
+.rect_2 {
+  background: rgba(var(--BlueColor), 1);
+  z-index: 3;
+  width: 20%;
+  height: 40%;
+  transform: translateX(130%) translateY(500%) rotate(77deg);
+  animation: rect_2Move 7s forwards;
+}
+
+.rect_3 {
+  background: rgba(var(--OrangeColor), 1);
+  z-index: 2;
+  width: 16%;
+  height: 40%;
+  transform: translateX(60%) translateY(1000%) rotate(21deg);
+  animation: rect_3Move 5s forwards;
+}
+
+.rect_4 {
+  background: rgba(var(--BlueColor), 1);
+  z-index: 1;
+  width: 24%;
+  height: 50%;
+  transform: translateX(-60%) translateY(500%) rotate(24deg);
+  animation: rect_4Move 4s forwards;
+}
+
+/* Play animations when class is added */
+
+@keyframes rect_1Move {
+  to {
+    opacity: 1;
+    transform: translateX(150%) translateY(210%) rotate(21deg);
+  }
+}
+
+@keyframes rect_2Move {
+  to {
+    opacity: 1;
+    transform: translateX(130%) translateY(180%) rotate(77deg);
+  }
+}
+
+@keyframes rect_3Move {
+  to {
+    opacity: 1;
+    transform: translateX(60%) translateY(200%) rotate(21deg);
+  }
+}
+
+@keyframes rect_4Move {
+  to {
+    opacity: 1;
+    transform: translateX(-30%) translateY(120%) rotate(24deg);
+  }
+}
+
+/* Page Change */
+.animate-exit .rect_1 {
+  transition: all 3s ease;
+  opacity: 1;
+  transform: translateX(150%) translateY(210%) rotate(21deg);
+  animation: rect1_exit 4s forwards;
+}
+
+.animate-exit .rect_2 {
+  transition: all 3s ease;
+  opacity: 1;
+  transform: translateX(130%) translateY(180%) rotate(77deg);
+  animation: rect2_exit 4s forwards;
+}
+
+.animate-exit .rect_3 {
+  transition: all 3s ease;
+  opacity: 1;
+  transform: translateX(60%) translateY(200%) rotate(21deg);
+  animation: rect3_exit 4s forwards;
+}
+
+.animate-exit .rect_4 {
+  transition: all 3s ease;
+  opacity: 1;
+  transform: translateX(-30%) translateY(120%) rotate(24deg);
+  animation: rect4_exit 4s forwards;
+}
+
+@keyframes rect1_exit {
+  to {
+    opacity: 0;
+    transform: translateX(150%) translateY(500%) rotate(21deg);
+  }
+}
+@keyframes rect2_exit {
+  to {
+    opacity: 0;
+    transform: translateX(130%) translateY(500%) rotate(77deg);
+  }
+}
+@keyframes rect3_exit {
+  to {
+    opacity: 0;
+    transform: translateX(60%) translateY(500%) rotate(21deg);
+  }
+}
+@keyframes rect4_exit {
+  to {
+    opacity: 0;
+    transform: translateX(-30%) translateY(500%) rotate(24deg);
   }
 }
