@@ -242,10 +242,8 @@ function Login() {
     e.preventDefault();
     if (activeTab === "login") {
       console.log("Logging in:", { username: formData.username, password: formData.password });
-      // Handle login logic
     } else {
       console.log("Registering:", formData);
-      // Handle register logic
     }
   };
 
