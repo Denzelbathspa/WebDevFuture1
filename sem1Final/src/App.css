@@ -16,14 +16,43 @@
   /* Settings*/
   text-align: center;
   font-family: 'Pixelify Sans', sans-serif;
+  
+}
+
+/* App Wrapper*/
+.App {
+  background-color: rgba(var(--WhiteColor), 1);
+  width: 100vw;
+  height: 100vh;
 
   /* Layout */
   margin: 0;
   padding: 2rem;
-  overflow: hidden;
-  
-  background-color: rgba(var(--WhiteColor), 1) ;
 }
+
+/* Page Change Animation */
+/* Curtain Styles */
+.curtain-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+}
+
+.curtain {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #2c3e50, #34495e);
+  transform-origin: top;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
 
 /* Navigation Bar */
 .class_NavBar {
@@ -38,7 +67,7 @@
 .class_NavBar button {
   background-color: rgba(var(--WhiteColor), 0) ;
   color: rgba(var(--BlackColor), 1) ;
-  font-size: 20px;
+  font-size: 1.5vw;
   
 }
 
@@ -53,7 +82,7 @@
 .class_GameDesc p {
   background-color: rgba(var(--WhiteColor), 0) ;
   color: rgba(var(--BlackColor), 1) ;
-  font-size: 20px;
+  font-size: 1.5vw;
   text-align: justify;
 
   /* Layout */
@@ -65,8 +94,6 @@
 
 .class_PlayNow {
   background-color: rgba(var(--OrangeColor), 1) ;
-  color: rgba(var(--WhiteColor), 1) ;
-  font-size: 20px;
 
   padding: 0;
 
@@ -75,6 +102,11 @@
   transform: translateY(20px);
   animation: fadeUp_anim 0.5s forwards;
   animation-delay: 3s;
+}
+
+.class_PlayNow a {
+  color: rgba(var(--WhiteColor), 1) ;
+  font-size: 1.5vw;
 }
 
 /* Individual Char Animation*/
@@ -95,11 +127,12 @@
 /* Rbx LOGO*/
 .class_RobloxLogo {
   /* Layout */
-  transform: translateX(40%) translateY(-65%) rotate(21deg);
+  transform: translateX(40%) translateY(-45%) rotate(21deg);
 }
 .class_RobloxLogo img{
   filter: drop-shadow(4px 4px 5px rgba(0,0,0,0.5));
-
+  width: 30%;
+  height: 30%;
 }
 
 .rbx_logo_upper {
@@ -146,7 +179,7 @@
 .rect_2 {
   background: rgba(var(--BlueColor), 1);
   z-index: 3;
-  width: 20%;
+  width: 18%;
   height: 40%;
   transform: translateX(130%) translateY(500%) rotate(77deg);
   animation: rect_2Move 7s forwards;
@@ -182,7 +215,7 @@
 @keyframes rect_2Move {
   to {
     opacity: 1;
-    transform: translateX(130%) translateY(180%) rotate(77deg);
+    transform: translateX(130%) translateY(195%) rotate(77deg);
   }
 }
 
@@ -200,56 +233,108 @@
   }
 }
 
-/* Page Change */
-.animate-exit .rect_1 {
-  transition: all 3s ease;
-  opacity: 1;
-  transform: translateX(150%) translateY(210%) rotate(21deg);
-  animation: rect1_exit 4s forwards;
+/* Login */
+.LoginContainer {
+  width: 100vw;
+  height: 100vh;
+  
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8%;
 }
 
-.animate-exit .rect_2 {
-  transition: all 3s ease;
-  opacity: 1;
-  transform: translateX(130%) translateY(180%) rotate(77deg);
-  animation: rect2_exit 4s forwards;
+.LoginHeader {
+  width: 40%;
+  display: flex;
 }
 
-.animate-exit .rect_3 {
-  transition: all 3s ease;
-  opacity: 1;
-  transform: translateX(60%) translateY(200%) rotate(21deg);
-  animation: rect3_exit 4s forwards;
+.LoginContainer button {
+  padding: 12px 24px;
+  margin: 0;
+  background-color: rgba(var(--OrangeColor), 1);
+  color: rgba(var(--BlackColor), 1);
+  font-size: 1.5vw;
+  cursor: pointer;
+  border-radius: 0;
+  flex: 1;
+  transition: opacity 0.3s ease;
 }
 
-.animate-exit .rect_4 {
-  transition: all 3s ease;
+.LoginContainer button.active {
   opacity: 1;
-  transform: translateX(-30%) translateY(120%) rotate(24deg);
-  animation: rect4_exit 4s forwards;
+  font-weight: bold;
 }
 
-@keyframes rect1_exit {
-  to {
-    opacity: 0;
-    transform: translateX(150%) translateY(500%) rotate(21deg);
-  }
+.LoginContainer button.inactive {
+  opacity: 0.7;
 }
-@keyframes rect2_exit {
-  to {
-    opacity: 0;
-    transform: translateX(130%) translateY(500%) rotate(77deg);
-  }
+
+.LoginButton {
+  border-right: none;
 }
-@keyframes rect3_exit {
-  to {
-    opacity: 0;
-    transform: translateX(60%) translateY(500%) rotate(21deg);
-  }
+
+.SignUpButton {
+  border-left: none;
 }
-@keyframes rect4_exit {
-  to {
-    opacity: 0;
-    transform: translateX(-30%) translateY(500%) rotate(24deg);
-  }
+
+.LoginBox {
+  background-color: rgba(var(--WhiteColor), 1);
+  border-top: none;
+  width: 40%;
+  height: 48%;
+  max-height: 500px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.LoginForm {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content:space-between;
+}
+
+.InputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.InputGroup label {
+  font-size: 1.4vw;
+  color: rgba(var(--BlackColor), 1);
+  font-weight: bold;
+}
+
+.InputGroup input {
+  padding: 12px;
+  border: 2px solid rgba(var(--BlackColor), 1);
+  background-color: rgba(var(--WhiteColor), 1);
+  color: rgba(var(--BlackColor), 1);
+  font-size: 1.4vw;
+  border-radius: 4px;
+}
+
+.InputGroup input:focus {
+  outline: none;
+  border-color: rgba(var(--BlueColor), 1);
+}
+
+.SubmitButton {
+  max-width: 50%;
+  max-height: 15%;
+  padding: 12px 24px;
+  background-color: rgba(var(--OrangeColor), 1);
+  color: rgba(var(--WhiteColor), 1);
+  border: none;
+  font-size: 1.4vw;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.SubmitButton:hover {
+  background-color: rgba(var(--OrangeColor), 0.8);
 }
