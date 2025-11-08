@@ -51,7 +51,7 @@ function App() {
     const shouldScroll = pagesWithScrolling.includes(pageCurrent);
     
     if (shouldScroll) {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'vertical';
       document.documentElement.style.overflow = 'auto';
     } else {
       document.body.style.overflow = 'hidden';
@@ -93,10 +93,17 @@ function App() {
     }
   }
 
+  // Function to determine if current page is Home
+  const isHomePage = pageCurrent === "HOME";
+
   return (
     <div className="App"
       id="app-container"
-      style={{ backgroundColor: `rgb(${getBackgroundColor()})` }}
+      style={{ 
+        backgroundColor: `rgb(${getBackgroundColor()})`,
+        height: isHomePage ? '100vh' : 'auto',
+        overflow: isHomePage ? 'hidden' : 'visible'
+      }}
       >
       <AnimatePresence mode="wait">
         {showCurtain && (
@@ -110,7 +117,7 @@ function App() {
 
       <div style={{ 
         width: '100%', 
-        height: '100%',
+        height: isHomePage ? '100%' : 'auto',
         transition: 'filter 0.3s ease'
       }}>
         {/* Pass pageCurrent to NavigationBar */}
@@ -124,6 +131,7 @@ function App() {
     </div>
   )
 }
+
 
 // ==================== Page Components ==================== //
 function HomePage() {

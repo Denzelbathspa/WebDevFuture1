@@ -50,7 +50,7 @@ export class BackgroundManager {
 
   createShapes() {
     this.shapes = [];
-    const shapeCount = 32;
+    const shapeCount = 64;
     
     // Calculate size based on screen dimensions
     const minScreenSize = Math.min(this.canvas.width, this.canvas.height);
@@ -97,7 +97,7 @@ export class BackgroundManager {
   }
 
   updateShapes() {
-    const pushForce = 0.3; // Much more subtle push
+    const pushForce = 0.3; // Push offset
     
     this.shapes.forEach(shape => {
       // Calculate distance to mouse (accounting for scroll)
@@ -138,7 +138,7 @@ export class BackgroundManager {
       shape.y += shape.vy;
       shape.rotation += shape.rotationSpeed;
       
-      const teleportMargin = Math.max(shape.width, shape.height) * 2;
+      const teleportMargin = Math.max(shape.width, shape.height) * 3;
       
       if (shape.x < -teleportMargin) {
         shape.x = this.canvas.width + teleportMargin;
@@ -164,7 +164,7 @@ export class BackgroundManager {
   }
 
   checkShapeRepulsion() {
-    const shapePushForce = 0.08;
+    const shapePushForce = 0.04;
     
     for (let i = 0; i < this.shapes.length; i++) {
       for (let j = i + 1; j < this.shapes.length; j++) {
@@ -206,7 +206,7 @@ export class BackgroundManager {
     this.ctx.save();
     
     // Apply scroll offset to create parallax effect
-    this.ctx.translate(0, -this.scrollY * 0.3);
+    this.ctx.translate(0, -this.scrollY * 0.5);
     
     this.shapes.forEach(shape => {
       this.ctx.save();
