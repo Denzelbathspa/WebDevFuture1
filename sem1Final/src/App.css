@@ -87,10 +87,12 @@
   max-width: 57%;
   margin-left: 10%;
   margin-top: 10%;
+  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .class_PlayNow {
   background-color: rgba(var(--OrangeColor), 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   padding: 0;
   opacity: 0;
   transform: translateY(20px);
@@ -161,7 +163,7 @@
 
 .rect_1 {
   background: rgba(var(--OrangeColor), 1);
-  z-index: 4;
+  z-index: -4;
   width: 26%;
   height: 40%;
   transform: translateX(150%) translateY(500%) rotate(21deg);
@@ -170,7 +172,7 @@
 
 .rect_2 {
   background: rgba(var(--BlueColor), 1);
-  z-index: 3;
+  z-index: -3;
   width: 30%;
   height: 40%;
   transform: translateX(70%) translateY(500%) rotate(-15deg);
@@ -179,7 +181,7 @@
 
 .rect_3 {
   background: rgba(var(--OrangeColor), 1);
-  z-index: 2;
+  z-index: -2;
   width: 16%;
   height: 40%;
   transform: translateX(60%) translateY(1000%) rotate(21deg);
@@ -188,7 +190,7 @@
 
 .rect_4 {
   background: rgba(var(--BlueColor), 1);
-  z-index: 1;
+  z-index: -1;
   width: 24%;
   height: 50%;
   transform: translateX(-60%) translateY(500%) rotate(24deg);
@@ -248,7 +250,7 @@
   display: flex;
 }
 
-.LoginContainer button {
+.LoginContainer .LoginButton, .SignUpButton {
   padding: 12px 24px;
   margin: 0;
   background-color: rgba(var(--OrangeColor), 1);
@@ -281,8 +283,7 @@
   background-color: rgba(var(--WhiteColor), 1);
   border-top: none;
   width: 40%;
-  height: 48%;
-  max-height: 500px;
+  height: auto;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -322,14 +323,14 @@
 
 .SubmitButton {
   max-width: 50%;
-  max-height: 15%;
+  height: auto;
   padding: 12px 24px;
   background-color: rgba(var(--OrangeColor), 1);
   color: rgba(var(--WhiteColor), 1);
   border: none;
   font-size: 1.4vw;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 25px;
 }
 
 .SubmitButton:hover {
