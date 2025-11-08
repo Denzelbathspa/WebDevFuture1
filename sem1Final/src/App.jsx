@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { motion, AnimatePresence } from 'framer-motion';
+import { BackgroundManager } from './JS/Leaderboards_BG';
 
 // Global Vars
 var WhiteColor = "233, 227, 223";
 var BlackColor= "0, 0, 0";
+var AestheticBlack= "36, 36, 36";
 var OrangeColor= "255, 122, 48";
 var BlueColor= "70, 92, 136";
 
@@ -13,18 +15,45 @@ function App() {
   const [pageCurrent, setPageCurrent] = useState("HOME");
   const [showCurtain, setShowCurtain] = useState(false);
   const [nextPage, setNextPage] = useState("");
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Control scrolling based on current page
+  // Leaderboard Custom Background
+  const backgroundManagerRef = useRef(null);
+
   useEffect(() => {
+    const isLeaderboards = pageCurrent === "LEADERBOARDS";
+    
+    if (isLeaderboards && !backgroundManagerRef.current) {
+      backgroundManagerRef.current = new BackgroundManager('app-container');
+      backgroundManagerRef.current.init();
+    } else if (!isLeaderboards && backgroundManagerRef.current) {
+      backgroundManagerRef.current.destroy();
+      backgroundManagerRef.current = null;
+    }
+
+    return () => {
+      if (backgroundManagerRef.current) {
+        backgroundManagerRef.current.destroy();
+        backgroundManagerRef.current = null;
+      }
+    };
+  }, [pageCurrent]);
+
+  // Scroll Controls
+  useEffect(() => {
+    if (isTransitioning || showCurtain) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return;
+    }
+
     const pagesWithScrolling = ["LEADERBOARDS", "ADMIN"];
     const shouldScroll = pagesWithScrolling.includes(pageCurrent);
     
     if (shouldScroll) {
-      // Enable scrolling
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     } else {
-      // Disable scrolling
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     }
@@ -33,9 +62,18 @@ function App() {
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     };
-  }, [pageCurrent]);
+  }, [pageCurrent, showCurtain, isTransitioning]);
 
   function pageChanging(PageRequest) {
+    // Scroll to top immediately
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Lock scrolling
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
     setNextPage(PageRequest);
     setShowCurtain(true);
     
@@ -49,14 +87,17 @@ function App() {
 
   function getBackgroundColor() {
     switch (pageCurrent) {
-      case "LEADERBOARDS": return OrangeColor;
+      case "LEADERBOARDS": return AestheticBlack;
       case "PROFILE": return BlueColor;
       default: return WhiteColor;
     }
   }
 
   return (
-    <div className="App" style={{ backgroundColor: `rgb(${getBackgroundColor()})` }}>
+    <div className="App"
+      id="app-container"
+      style={{ backgroundColor: `rgb(${getBackgroundColor()})` }}
+      >
       <AnimatePresence mode="wait">
         {showCurtain && (
           <Curtain 
@@ -72,7 +113,8 @@ function App() {
         height: '100%',
         transition: 'filter 0.3s ease'
       }}>
-        <NavigationBar pageChanging={pageChanging} />
+        {/* Pass pageCurrent to NavigationBar */}
+        <NavigationBar pageChanging={pageChanging} currentPage={pageCurrent} />
         
         {pageCurrent === "HOME" && <HomePage />}
         {pageCurrent === "LEADERBOARDS" && <LeaderboardsPage />}
@@ -96,17 +138,9 @@ function HomePage() {
 
 function LeaderboardsPage() {
   return (
-    <div style={{ padding: '2rem', color: 'white', minHeight: '150vh' }}>
-      <h1>Leaderboards</h1>
-      <p>Top Players:</p>
-      <div style={{ marginTop: '2rem' }}>
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div key={i} style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-            #{i + 1} Player {i + 1} - Score: {1000 - i * 50}
-          </div>
-        ))}
-      </div>
-    </div>
+    <>
+      <LeaderboardsComponent />
+    </>
   );
 }
 
@@ -162,14 +196,16 @@ function Curtain({ onCloseComplete, onOpenComplete }) {
 }
 
 // Navigation Bar
-function NavigationBar({ pageChanging }) {
+function NavigationBar({ pageChanging, currentPage }) {
+  const shouldBeWhite = currentPage === "LEADERBOARDS" || currentPage === "PROFILE";
+  
   return (
-    <div className="class_NavBar">
+    <div className={`class_NavBar ${shouldBeWhite ? 'nav-white-text' : ''}`}>
       <nav>
-          <button onClick={() => pageChanging("HOME")}>HOME</button>
-          <button onClick={() => pageChanging("LEADERBOARDS")}>LEADERBOARDS</button>
-          <button onClick={() => pageChanging("PROFILE")}>LOGIN</button>
-          <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>ADMIN PANEL</button>
+        <button onClick={() => pageChanging("HOME")}>HOME</button>
+        <button onClick={() => pageChanging("LEADERBOARDS")}>LEADERBOARDS</button>
+        <button onClick={() => pageChanging("PROFILE")}>LOGIN</button>
+        <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>ADMIN PANEL</button>
       </nav>
     </div>
   )
@@ -313,6 +349,124 @@ function Login() {
       </div>
     </div>
   )
+}
+
+// Leaderboards Page
+function LeaderboardsComponent() {
+  // Replace with API
+  const leaderboardData = {
+    topRebirths: [
+      { rank: 1, username: "ProPlayer1", value: 83 },
+      { rank: 2, username: "GameMaster", value: 76 },
+      { rank: 3, username: "WalkWarrior", value: 72 },
+      { rank: 4, username: "SpeedRunner", value: 68 },
+      { rank: 5, username: "CasualGamer", value: 65 },
+      { rank: 6, username: "PizzaLover", value: 61 },
+      { rank: 7, username: "Walker123", value: 58 },
+      { rank: 8, username: "ChillPlayer", value: 55 },
+      { rank: 9, username: "NewbiePro", value: 52 },
+      { rank: 10, username: "JustWalking", value: 49 }
+    ],
+    topPlaytime: [
+      { rank: 1, username: "TimeMaster", value: "325m" },
+      { rank: 2, username: "Dedicated", value: "298m" },
+      { rank: 3, username: "AlwaysOn", value: "276m" },
+      { rank: 4, username: "Grinder", value: "254m" },
+      { rank: 5, username: "Persistent", value: "231m" },
+      { rank: 6, username: "Regular", value: "215m" },
+      { rank: 7, username: "Frequent", value: "198m" },
+      { rank: 8, username: "Occasional", value: "182m" },
+      { rank: 9, username: "Casual", value: "167m" },
+      { rank: 10, username: "Newcomer", value: "152m" }
+    ],
+    topCompletions: [
+      { rank: 1, username: "Completionist", value: 142 },
+      { rank: 2, username: "Finisher", value: 128 },
+      { rank: 3, username: "Achiever", value: 115 },
+      { rank: 4, username: "Perfectionist", value: 103 },
+      { rank: 5, username: "Master", value: 97 },
+      { rank: 6, username: "Expert", value: 86 },
+      { rank: 7, username: "Skilled", value: 78 },
+      { rank: 8, username: "Regular", value: 71 },
+      { rank: 9, username: "Amateur", value: 64 },
+      { rank: 10, username: "Beginner", value: 58 }
+    ],
+    fastest: [
+      { rank: 1, username: "SpeedDemon", value: "1:24" },
+      { rank: 2, username: "QuickSilver", value: "1:31" },
+      { rank: 3, username: "Flash", value: "1:37" },
+      { rank: 4, username: "Sonic", value: "1:42" },
+      { rank: 5, username: "Rapid", value: "1:48" },
+      { rank: 6, username: "Swift", value: "1:53" },
+      { rank: 7, username: "Fast", value: "1:59" },
+      { rank: 8, username: "Quick", value: "2:04" },
+      { rank: 9, username: "Brisk", value: "2:11" },
+      { rank: 10, username: "Speedy", value: "2:17" }
+    ]
+  };
+
+  // Reusable table component for each category
+  const LeaderboardTable = ({ title, data, category, valueLabel }) => (
+    <section className={`leaderboards-section leaderboards-section-${category}`}>
+      <h2 className="section-title">{title}</h2>
+      <div className={`table-container table-container-${category}`}>
+        <table className="leaderboards-table">
+          <thead>
+            <tr className="table-header">
+              <th>Rank</th>
+              <th>Username</th>
+              <th>{valueLabel}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((player) => (
+              <tr key={`${category}-${player.rank}`} className="table-row">
+                <td className="rank-cell">#{player.rank}</td>
+                <td className="username-cell">{player.username}</td>
+                <td className="value-cell">{player.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+
+  return (
+    <div className="leaderboards-container">
+      <h1 className="leaderboards-title">Leaderboards</h1>
+
+      <div className="leaderboards-grid">
+        <LeaderboardTable 
+          title="Top Rebirths" 
+          data={leaderboardData.topRebirths} 
+          category="rebirth" 
+          valueLabel="Rebirths" 
+        />
+        
+        <LeaderboardTable 
+          title="Top Playtime" 
+          data={leaderboardData.topPlaytime} 
+          category="playtime" 
+          valueLabel="Playtime" 
+        />
+        
+        <LeaderboardTable 
+          title="Top Completions" 
+          data={leaderboardData.topCompletions} 
+          category="completions" 
+          valueLabel="Completions" 
+        />
+        
+        <LeaderboardTable 
+          title="Fastest Times" 
+          data={leaderboardData.fastest} 
+          category="fastest" 
+          valueLabel="Time" 
+        />
+      </div>
+    </div>
+  );
 }
 
 export default App;
