@@ -65,12 +65,10 @@ function App() {
   }, [pageCurrent, showCurtain, isTransitioning]);
 
   function pageChanging(PageRequest) {
-    // Scroll to top immediately
     window.scrollTo({ top: 0, behavior: 'instant' });
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
     
-    // Lock scrolling
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
     
@@ -93,7 +91,6 @@ function App() {
     }
   }
 
-  // Function to determine if current page is Home
   const isHomePage = pageCurrent === "HOME";
 
   return (
@@ -120,7 +117,6 @@ function App() {
         height: isHomePage ? '100%' : 'auto',
         transition: 'filter 0.3s ease'
       }}>
-        {/* Pass pageCurrent to NavigationBar */}
         <NavigationBar pageChanging={pageChanging} currentPage={pageCurrent} />
         
         {pageCurrent === "HOME" && <HomePage />}
@@ -131,7 +127,6 @@ function App() {
     </div>
   )
 }
-
 
 // ==================== Page Components ==================== //
 function HomePage() {
@@ -177,7 +172,6 @@ function AdminPage() {
 }
 
 // ==================== Components ==================== //
-// Curtain Component
 function Curtain({ onCloseComplete, onOpenComplete }) {
   return (
     <div className="curtain-container">
@@ -203,7 +197,6 @@ function Curtain({ onCloseComplete, onOpenComplete }) {
   )
 }
 
-// Navigation Bar
 function NavigationBar({ pageChanging, currentPage }) {
   const shouldBeWhite = currentPage === "LEADERBOARDS" || currentPage === "PROFILE";
   
@@ -219,7 +212,6 @@ function NavigationBar({ pageChanging, currentPage }) {
   )
 }
 
-// Game Description
 function GameDescription() {
   const text = "Sometimes, the simple act of walking can be surprisingly therapeutic. Here, that calm experience is taken to the next level — combining relaxation with fun, competition, and a touch of creativity. Enjoy the scenery, climb the leaderboards, and unwind as you walk your way to victory. Are you ready for a relaxing yet competitive adventure? Come and ";
 
@@ -243,7 +235,6 @@ function GameDescription() {
   )
 }
 
-// Roblox Logo
 function RobloxLogo() {
   return (
     <div className='class_RobloxLogo'>
@@ -253,7 +244,6 @@ function RobloxLogo() {
   )
 }
 
-// Background Rects
 function BGRects() {
   return (
     <div className="imple-grid-bg">
@@ -265,9 +255,8 @@ function BGRects() {
   );
 }
 
-// Login Page
 function Login() {
-  const [activeTab, setActiveTab] = useState("login"); // "login" or "register"
+  const [activeTab, setActiveTab] = useState("login");
   const [formData, setFormData] = useState({
     username: "",
     password: "", 
@@ -359,116 +348,308 @@ function Login() {
   )
 }
 
-// Leaderboards Page
+// LEADERBOARDS
 function LeaderboardsComponent() {
-  // Replace with API
-  const leaderboardData = {
-    topRebirths: [
-      { rank: 1, username: "ProPlayer1", value: 83 },
-      { rank: 2, username: "GameMaster", value: 76 },
-      { rank: 3, username: "WalkWarrior", value: 72 },
-      { rank: 4, username: "SpeedRunner", value: 68 },
-      { rank: 5, username: "CasualGamer", value: 65 },
-      { rank: 6, username: "PizzaLover", value: 61 },
-      { rank: 7, username: "Walker123", value: 58 },
-      { rank: 8, username: "ChillPlayer", value: 55 },
-      { rank: 9, username: "NewbiePro", value: 52 },
-      { rank: 10, username: "JustWalking", value: 49 }
-    ],
-    topPlaytime: [
-      { rank: 1, username: "TimeMaster", value: "325m" },
-      { rank: 2, username: "Dedicated", value: "298m" },
-      { rank: 3, username: "AlwaysOn", value: "276m" },
-      { rank: 4, username: "Grinder", value: "254m" },
-      { rank: 5, username: "Persistent", value: "231m" },
-      { rank: 6, username: "Regular", value: "215m" },
-      { rank: 7, username: "Frequent", value: "198m" },
-      { rank: 8, username: "Occasional", value: "182m" },
-      { rank: 9, username: "Casual", value: "167m" },
-      { rank: 10, username: "Newcomer", value: "152m" }
-    ],
-    topCompletions: [
-      { rank: 1, username: "Completionist", value: 142 },
-      { rank: 2, username: "Finisher", value: 128 },
-      { rank: 3, username: "Achiever", value: 115 },
-      { rank: 4, username: "Perfectionist", value: 103 },
-      { rank: 5, username: "Master", value: 97 },
-      { rank: 6, username: "Expert", value: 86 },
-      { rank: 7, username: "Skilled", value: 78 },
-      { rank: 8, username: "Regular", value: 71 },
-      { rank: 9, username: "Amateur", value: 64 },
-      { rank: 10, username: "Beginner", value: 58 }
-    ],
-    fastest: [
-      { rank: 1, username: "SpeedDemon", value: "1:24" },
-      { rank: 2, username: "QuickSilver", value: "1:31" },
-      { rank: 3, username: "Flash", value: "1:37" },
-      { rank: 4, username: "Sonic", value: "1:42" },
-      { rank: 5, username: "Rapid", value: "1:48" },
-      { rank: 6, username: "Swift", value: "1:53" },
-      { rank: 7, username: "Fast", value: "1:59" },
-      { rank: 8, username: "Quick", value: "2:04" },
-      { rank: 9, username: "Brisk", value: "2:11" },
-      { rank: 10, username: "Speedy", value: "2:17" }
-    ]
+  const [leaderboardData, setLeaderboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const fetchLeaderboardData = async (forceRefresh = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      if (!forceRefresh) {
+        const cachedData = localStorage.getItem('pizzaWalkLeaderboardData');
+        const cachedTimestamp = localStorage.getItem('pizzaWalkLeaderboardTimestamp');
+        const isCacheValid = cachedTimestamp && (Date.now() - parseInt(cachedTimestamp)) < (5 * 60 * 1000);
+        
+        if (isCacheValid && cachedData) {
+          setLeaderboardData(JSON.parse(cachedData));
+          setLoading(false);
+          return;
+        }
+      }
+      
+      if (forceRefresh) {
+        localStorage.removeItem('pizzaWalkLeaderboardData');
+        localStorage.removeItem('pizzaWalkLeaderboardTimestamp');
+      }
+      
+      console.log('🔄 Fetching leaderboard data...');
+      const response = await fetch('http://localhost:3001/api/leaderboards', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Data received:', data._metadata?.source || 'fallback');
+      
+      const transformedData = transformApiData(data);
+      
+      setLeaderboardData(transformedData);
+      
+      localStorage.setItem('pizzaWalkLeaderboardData', JSON.stringify(transformedData));
+      localStorage.setItem('pizzaWalkLeaderboardTimestamp', Date.now().toString());
+      
+    } catch (err) {
+      console.error('❌ Error fetching data:', err);
+      setError(err.message);
+      
+      const cachedData = localStorage.getItem('pizzaWalkLeaderboardData');
+      if (cachedData) {
+        console.log('📦 Using cached data');
+        setLeaderboardData(JSON.parse(cachedData));
+      } else {
+        console.log('⚡ Using fallback data');
+        setLeaderboardData(getFallbackData());
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Reusable table component for each category
-  const LeaderboardTable = ({ title, data, category, valueLabel }) => (
-    <section className={`leaderboards-section leaderboards-section-${category}`}>
-      <h2 className="section-title">{title}</h2>
-      <div className={`table-container table-container-${category}`}>
-        <table className="leaderboards-table">
-          <thead>
-            <tr className="table-header">
-              <th>Rank</th>
-              <th>Username</th>
-              <th>{valueLabel}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((player) => (
-              <tr key={`${category}-${player.rank}`} className="table-row">
-                <td className="rank-cell">#{player.rank}</td>
-                <td className="username-cell">{player.username}</td>
-                <td className="value-cell">{player.value}</td>
+  useEffect(() => {
+    console.log('🔍 useEffect triggered, refreshTrigger:', refreshTrigger);
+    fetchLeaderboardData(refreshTrigger > 0);
+  }, [refreshTrigger]);
+
+  const handleRefresh = () => {
+    console.log('🔄 Manual refresh requested');
+    setError(null);
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleTestConnection = async () => {
+    console.log('🔗 Testing server connection...');
+    try {
+      const response = await fetch('http://localhost:3001/api/test');
+      const data = await response.json();
+      console.log('Server test:', data);
+      handleRefresh();
+    } catch (err) {
+      console.error('Test failed:', err);
+      setError('Server not responding: ' + err.message);
+    }
+  };
+
+  const transformApiData = (apiData) => {
+    console.log('Transforming API data:', apiData);
+    
+    if (apiData.topRebirths && apiData.topPlaytime) {
+      console.log('Data already in correct format');
+      return apiData;
+    }
+    
+    if (apiData._metadata) {
+      console.log('Data has metadata, using as-is');
+      return apiData;
+    }
+    
+    if (apiData.rebirths || apiData.playtime) {
+      console.log('Converting old structure to new structure');
+      return {
+        topRebirths: apiData.rebirths?.map((item, index) => ({
+          rank: index + 1,
+          username: item.username,
+          value: item.rebirthCount || item.value
+        })) || [],
+        
+        topPlaytime: apiData.playtime?.map((item, index) => ({
+          rank: index + 1,
+          username: item.username,
+          value: `${item.minutesPlayed || item.value}m`
+        })) || [],
+        
+        topCompletions: apiData.completions?.map((item, index) => ({
+          rank: index + 1,
+          username: item.username,
+          value: item.completionCount || item.value
+        })) || [],
+        
+        fastest: apiData.fastestTimes?.map((item, index) => ({
+          rank: index + 1,
+          username: item.username,
+          value: item.time || item.value
+        })) || []
+      };
+    }
+    
+    console.log('No recognizable structure, using fallback');
+    return getFallbackData();
+  };
+
+  const LeaderboardTable = ({ title, data, category, valueLabel }) => {
+    const tableData = data || [];
+    
+    return (
+      <section className={`leaderboards-section leaderboards-section-${category}`}>
+        <h2 className="section-title">{title}</h2>
+        <div className={`table-container table-container-${category}`}>
+          <table className="leaderboards-table">
+            <thead>
+              <tr className="table-header">
+                <th>Rank</th>
+                <th>Username</th>
+                <th>{valueLabel}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {tableData.length > 0 ? (
+                tableData.map((player, index) => (
+                  <tr key={`${category}-${player.rank || index}`} className="table-row">
+                    <td className="rank-cell">#{player.rank || index + 1}</td>
+                    <td className="username-cell">{player.username || `Player ${index + 1}`}</td>
+                    <td className="value-cell">{player.value || "N/A"}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" className="no-data-cell">
+                    No data available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    );
+  };
+
+  const getConnectionStatus = () => {
+    if (leaderboardData?._metadata) {
+      return leaderboardData._metadata.source === 'roblox_api' 
+        ? '✅ Connected to Roblox' 
+        : '📦 Using fallback data';
+    }
+    return '⚡ Loading...';
+  };
+
+  if (loading && !leaderboardData) {
+    return (
+      <div className="leaderboards-container">
+        <h1 className="leaderboards-title">Leaderboards</h1>
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>Loading leaderboards...</p>
+          <button onClick={handleRefresh} className="refresh-button">
+            Force Refresh
+          </button>
+        </div>
       </div>
-    </section>
-  );
+    );
+  }
+
+  if (error && !leaderboardData) {
+    return (
+      <div className="leaderboards-container">
+        <h1 className="leaderboards-title">Leaderboards</h1>
+        <div className="error-message">
+          <p>❌ Error: {error}</p>
+          <div style={{ marginTop: '1rem' }}>
+            <button onClick={handleRefresh} className="refresh-button">
+              Retry
+            </button>
+            <button onClick={handleTestConnection} className="refresh-button" style={{ marginLeft: '10px' }}>
+              Test Server
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const dataToDisplay = leaderboardData || getFallbackData();
 
   return (
     <div className="leaderboards-container">
-      <h1 className="leaderboards-title">Leaderboards</h1>
+      <div className="leaderboards-header">
+        <h1 className="leaderboards-title">Leaderboards</h1>
+        <div className="leaderboards-controls">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              onClick={handleRefresh} 
+              className="refresh-button"
+              disabled={loading}
+            >
+              {loading ? '🔄 Refreshing...' : '🔄 Refresh Data'}
+            </button>
+            
+            <button 
+              onClick={handleTestConnection}
+              className="test-button"
+              style={{ padding: '8px 16px', background: '#4a90e2' }}
+            >
+              Test Connection
+            </button>
+            
+            <div className="connection-status" style={{ fontSize: '0.9rem', color: '#aaa' }}>
+              {getConnectionStatus()}
+            </div>
+            
+            {localStorage.getItem('pizzaWalkLeaderboardTimestamp') && (
+              <div className="last-updated">
+                Updated: {new Date(
+                  parseInt(localStorage.getItem('pizzaWalkLeaderboardTimestamp'))
+                ).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {leaderboardData?._metadata && (
+        <div style={{ 
+          background: 'rgba(255,255,255,0.1)', 
+          padding: '10px', 
+          borderRadius: '5px',
+          marginBottom: '20px',
+          fontSize: '0.9rem'
+        }}>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <span>Source: <strong>{leaderboardData._metadata.source}</strong></span>
+            {leaderboardData._metadata.datastoreCount !== undefined && (
+              <span>DataStores: <strong>{leaderboardData._metadata.datastoreCount}</strong></span>
+            )}
+            {leaderboardData._metadata.connected && (
+              <span style={{ color: '#4CAF50' }}>✅ Roblox Connected</span>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="leaderboards-grid">
         <LeaderboardTable 
           title="Top Rebirths" 
-          data={leaderboardData.topRebirths} 
+          data={dataToDisplay.topRebirths || []} 
           category="rebirth" 
           valueLabel="Rebirths" 
         />
         
         <LeaderboardTable 
           title="Top Playtime" 
-          data={leaderboardData.topPlaytime} 
+          data={dataToDisplay.topPlaytime || []} 
           category="playtime" 
           valueLabel="Playtime" 
         />
         
         <LeaderboardTable 
           title="Top Completions" 
-          data={leaderboardData.topCompletions} 
+          data={dataToDisplay.topCompletions || []} 
           category="completions" 
           valueLabel="Completions" 
         />
         
         <LeaderboardTable 
           title="Fastest Times" 
-          data={leaderboardData.fastest} 
+          data={dataToDisplay.fastest || []} 
           category="fastest" 
           valueLabel="Time" 
         />
