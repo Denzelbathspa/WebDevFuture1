@@ -654,7 +654,8 @@
 }
 
 /* Admin Page */
-/* Admin Panel Styles */
+/* Admin Page */
+
 .admin-container {
   padding: 2rem;
   background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
@@ -876,40 +877,68 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
+/* Fixed Chart Bars Container */
 .chart-bars {
   flex: 1;
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  padding: 0 10px;
+  justify-content: space-around;
+  gap: 4px;
+  padding: 0 5px 25px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  min-height: 180px;
+  margin-bottom: 10px;
 }
 
+/* Fixed Chart Bar - Won't Overflow */
 .chart-bar {
   flex: 1;
+  max-width: 35px;
   background: linear-gradient(to top, #4cc9f0, #4361ee);
   border-radius: 4px 4px 0 0;
   position: relative;
-  min-height: 20px;
-  transition: height 0.3s;
+  min-height: 5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Hover effect for bars */
+.chart-bar:hover {
+  background: linear-gradient(to top, #ff9966, #ff5e62);
+  transform: scaleY(1.05);
+}
+
+/* Value labels positioned correctly */
 .bar-value {
   position: absolute;
-  top: -25px;
+  top: -30px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #aaa;
   white-space: nowrap;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2px 6px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+
+.chart-bar:hover .bar-value {
+  opacity: 1;
 }
 
 .chart-labels {
   display: flex;
   justify-content: space-around;
-  padding: 10px 0 0;
+  padding: 5px 0 0;
+  margin-top: 5px;
 }
 
 .chart-labels.hourly {
@@ -918,49 +947,97 @@
 }
 
 .chart-label {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #888;
   text-align: center;
+  width: 35px;
 }
 
+/* Line Chart Container */
 .line-chart {
-  height: 100%;
+  height: calc(100% - 40px);
   position: relative;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-left: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 20px 0 30px 30px;
 }
 
+/* Line Points - Fixed Positioning */
 .line-point {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background: #ff5e62;
   border-radius: 50%;
   transform: translate(-50%, 50%);
   z-index: 2;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s;
 }
 
-.line-point::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: rgba(255, 94, 98, 0.1);
-  border-radius: 50%;
-  top: -50%;
-  left: -50%;
-  z-index: 1;
+.line-point:hover {
+  width: 14px;
+  height: 14px;
+  background: #ff9966;
 }
 
+/* Point Value Positioning */
 .point-value {
   position: absolute;
-  top: -25px;
+  top: -28px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #ff5e62;
   font-weight: bold;
   white-space: nowrap;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2px 6px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+
+.line-point:hover .point-value {
+  opacity: 1;
+}
+
+/* Grid Lines for Better Visualization */
+.chart-bars::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      to top,
+      transparent,
+      transparent 24%,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.03) 25.5%
+    );
+  pointer-events: none;
+}
+
+/* Y-axis Labels */
+.y-axis-labels {
+  position: absolute;
+  left: -35px;
+  top: 0;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.y-axis-label {
+  font-size: 0.7rem;
+  color: #666;
+  text-align: right;
 }
 
 /* Data Tables */
@@ -990,6 +1067,8 @@
   max-height: 300px;
   overflow-y: auto;
   margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
 }
 
 .data-table table {
@@ -1079,6 +1158,8 @@
   font-size: 0.9rem;
   color: #aaa;
   text-align: center;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Analytics Grid */
@@ -1093,11 +1174,21 @@
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
+  transition: all 0.3s;
+}
+
+.analytics-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
 }
 
 .analytics-item.attention {
   grid-column: span 2;
   background: rgba(255, 152, 0, 0.1);
+}
+
+.analytics-item.attention:hover {
+  background: rgba(255, 152, 0, 0.15);
 }
 
 .analytics-label {
@@ -1149,6 +1240,12 @@
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
+  transition: all 0.3s;
+}
+
+.leaderboard-stat:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
 }
 
 .stat-label {
@@ -1211,6 +1308,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.summary-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
 }
 
 .summary-item span {
@@ -1282,6 +1388,7 @@
 .admin-actions button:hover {
   opacity: 0.9;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Loading State */
@@ -1347,4 +1454,37 @@
     width: 100%;
     justify-content: center;
   }
+  
+  .chart-bars {
+    gap: 2px;
+    padding: 0 2px 25px;
+  }
+  
+  .chart-bar {
+    max-width: 25px;
+  }
+  
+  .chart-label {
+    width: 25px;
+    font-size: 0.6rem;
+  }
+}
+
+/* Scrollbar Styling */
+.table-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

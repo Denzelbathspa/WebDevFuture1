@@ -659,12 +659,12 @@ function AdminPage() {
         const realGameData = {
           gameInfo: {
             name: "Pizza Walk Gaem [BUG FIXES]",
-            activePlayers: 0,      // From URL: "活跃 0"
-            favorites: 21,         // From URL: "设为最爱人数 21"
-            visits: 5110,          // From URL: "访问次数 5,110"
-            maxPlayers: 12,        // From URL: "服务器大小 12"
-            created: "2025-08-14", // From URL: "创建时间 2025/8/14"
-            updated: "2025-12-28"  // From URL: "更新时间 2025/12/28"
+            activePlayers: 0,
+            favorites: 5,
+            visits: 5110,
+            maxPlayers: 12,
+            created: "2025-08-14",
+            updated: "2025-12-28"
           },
           metrics: generateMetricsData(),
           purchases: generatePurchasesData(),
@@ -812,11 +812,11 @@ function AdminPage() {
   const generateLeaderboardSummary = () => {
     return {
       topPlayers: [
-        { rank: 1, username: "ProWalkerX", reborns: 892, playtime: "1245h" },
-        { rank: 2, username: "PizzaMaster", reborns: 756, playtime: "987h" },
-        { rank: 3, username: "SpeedDemon", reborns: 689, playtime: "856h" },
-        { rank: 4, username: "ChillWalker", reborns: 567, playtime: "1245h" },
-        { rank: 5, username: "AFKEnthusiast", reborns: 456, playtime: "789h" }
+        { rank: 1, username: "ART_CBAPIINK", reborns: 91, playtime: "2h 13m" },
+        { rank: 2, username: "Galactus1234", reborns: 78, playtime: "3h 9m" },
+        { rank: 3, username: "phaze_14", reborns: 75, playtime: "856h" },
+        { rank: 4, username: "AbdAI394", reborns: 33, playtime: "1h 38m" },
+        { rank: 5, username: "elegent360", reborns: 31, playtime: "2h 15m" }
       ],
       dailyCompletion: "1,245",
       averageScore: "8,567",
@@ -957,7 +957,7 @@ function AdminPage() {
                       <div
                         key={i}
                         className="chart-bar"
-                        style={{ height: `${(day.value / 2000) * 100}%` }}
+                        style={{ height: `${(day.value / 2000) * 25}%` }}
                         title={`${day.date}: ${day.value} visits`}
                       >
                         <div className="bar-value">{day.value}</div>
@@ -1213,25 +1213,6 @@ function AdminPage() {
             </strong>
           </div>
         </div>
-      </div>
-
-      {/* Admin Actions */}
-      <div className="admin-actions">
-        <button className="btn-primary" onClick={() => window.location.reload()}>
-          🔄 Refresh All Data
-        </button>
-        <button className="btn-secondary">
-          📥 Export Report (CSV)
-        </button>
-        <button className="btn-warning">
-          🔧 System Maintenance
-        </button>
-        <button className="btn-info">
-          📊 Update Analytics
-        </button>
-        <button className="btn-danger">
-          🚨 Emergency Alert
-        </button>
       </div>
     </div>
   );
