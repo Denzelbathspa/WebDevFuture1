@@ -16,6 +16,13 @@ function App() {
   const [showCurtain, setShowCurtain] = useState(false);
   const [nextPage, setNextPage] = useState("");
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // User Authentication State
+  const [user, setUser] = useState(() => {
+    // Check localStorage for existing session
+    const savedUser = localStorage.getItem('pizzaWalkUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   // Leaderboard Custom Background
   const backgroundManagerRef = useRef(null);
@@ -83,6 +90,38 @@ function App() {
     }, 600);
   }
 
+  // Authentication Functions
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('pizzaWalkUser', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('pizzaWalkUser');
+    if (pageCurrent === "PROFILE") {
+      pageChanging("HOME");
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    // Google OAuth2 implementation
+    // This is where you'll integrate actual Google OAuth
+    // For now, we'll simulate a Google login
+    
+    // Simulate Google login process
+    const googleUser = {
+      id: 'google_' + Date.now(),
+      username: 'Google User',
+      email: 'user@gmail.com',
+      provider: 'google',
+      avatar: 'https://ui-avatars.com/api/?name=Google+User&background=FF5722&color=fff',
+      displayName: 'Google User'
+    };
+    
+    handleLogin(googleUser);
+  };
+
   function getBackgroundColor() {
     switch (pageCurrent) {
       case "LEADERBOARDS": return AestheticBlack;
@@ -117,11 +156,23 @@ function App() {
         height: isHomePage ? '100%' : 'auto',
         transition: 'filter 0.3s ease'
       }}>
-        <NavigationBar pageChanging={pageChanging} currentPage={pageCurrent} />
+        {/* UPDATED: Pass user and logout function to NavigationBar */}
+        <NavigationBar 
+          pageChanging={pageChanging} 
+          currentPage={pageCurrent} 
+          user={user}
+          onLogout={handleLogout}
+        />
         
         {pageCurrent === "HOME" && <HomePage />}
         {pageCurrent === "LEADERBOARDS" && <LeaderboardsPage />}
-        {pageCurrent === "PROFILE" && <ProfilePage />}
+        {pageCurrent === "PROFILE" && (
+          <ProfilePage 
+            onLogin={handleLogin}
+            onGoogleLogin={handleGoogleLogin}
+            user={user}
+          />
+        )}
         {pageCurrent === "ADMIN" && <AdminPage />}
       </div>
     </div>
@@ -140,200 +191,6 @@ function HomePage() {
 }
 
 function LeaderboardsPage() {
-  return (
-    <>
-      <LeaderboardsComponent />
-    </>
-  );
-}
-
-function ProfilePage() {
-  return (
-    <>
-      <Login />
-    </>
-  );
-}
-
-// ==================== Components ==================== //
-function Curtain({ onCloseComplete, onOpenComplete }) {
-  return (
-    <div className="curtain-container">
-      <motion.div
-        className="curtain"
-        initial={{ scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        exit={{ scaleY: 0 }}
-        transition={{
-          duration: 0.6,
-          ease: "easeInOut"
-        }}
-        onAnimationComplete={(definition) => {
-          if (definition === "animate") {
-            onCloseComplete?.();
-            setTimeout(() => {
-              onOpenComplete?.();
-            }, 300);
-          }
-        }}
-      />
-    </div>
-  )
-}
-
-function NavigationBar({ pageChanging, currentPage }) {
-  const shouldBeWhite = currentPage === "LEADERBOARDS" || currentPage === "PROFILE";
-  
-  return (
-    <div className={`class_NavBar ${shouldBeWhite ? 'nav-white-text' : ''}`}>
-      <nav>
-        <button onClick={() => pageChanging("HOME")}>HOME</button>
-        <button onClick={() => pageChanging("LEADERBOARDS")}>LEADERBOARDS</button>
-        <button onClick={() => pageChanging("PROFILE")}>LOGIN</button>
-        <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>ADMIN PANEL</button>
-      </nav>
-    </div>
-  )
-}
-
-function GameDescription() {
-  const text = "Sometimes, the simple act of walking can be surprisingly therapeutic. Here, that calm experience is taken to the next level — combining relaxation with fun, competition, and a touch of creativity. Enjoy the scenery, climb the leaderboards, and unwind as you walk your way to victory. Are you ready for a relaxing yet competitive adventure? Come and ";
-
-  const words = text.split(" ");
-
-  return (
-    <div className="class_GameDesc">
-      <p>
-        {words.map((word, index) => (
-          <span
-            key={index}
-            style={{ animationDelay: `${index * 0.05}s` }}
-            className="wordAnimation"
-          >
-            {word}&nbsp; 
-          </span>
-        ))}
-      <button className="class_PlayNow"><a href='https://www.roblox.com/games/110035627916808/pizza-walk-gaem-BUG-FIXES'>PLAY NOW!</a></button>
-      </p>
-    </div>
-  )
-}
-
-function RobloxLogo() {
-  return (
-    <div className='class_RobloxLogo'>
-      <img className='rbx_logo_upper' src='\src\assets\RobloxLogo_Upper.png'></img><br></br>
-      <img className='rbx_logo_lower' src='\src\assets\RobloxLogo_Lower.png'></img>
-    </div>
-  )
-}
-
-function BGRects() {
-  return (
-    <div className="imple-grid-bg">
-      <div className="rect_1"></div>
-      <div className="rect_2"></div>
-      <div className="rect_3"></div>
-      <div className="rect_4"></div>
-    </div>
-  );
-}
-
-function Login() {
-  const [activeTab, setActiveTab] = useState("login");
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "", 
-    email: ""
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (activeTab === "login") {
-      console.log("Logging in:", { username: formData.username, password: formData.password });
-    } else {
-      console.log("Registering:", formData);
-    }
-  };
-
-  return (
-    <div className="LoginContainer">
-      <div className="LoginHeader">
-        <button 
-          className={`LoginButton ${activeTab === "login" ? "active" : "inactive"}`}
-          onClick={() => setActiveTab("login")}
-        >
-          Login
-        </button>
-        <button 
-          className={`SignUpButton ${activeTab === "register" ? "active" : "inactive"}`}
-          onClick={() => setActiveTab("register")}
-        >
-          Register
-        </button>
-      </div>
-      <div className="LoginBox">
-        <form onSubmit={handleSubmit} className="LoginForm">
-          <div className="InputGroup">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Enter your username"
-              required
-            />
-          </div>
-
-          <div className="InputGroup">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          {activeTab === "register" && (
-            <div className="InputGroup">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-          )}
-
-          <button type="submit" className="SubmitButton">
-            {activeTab === "login" ? "Login" : "Register"}
-          </button>
-        </form>
-      </div>
-    </div>
-  )
-}
-
-// LEADERBOARDS
-function LeaderboardsComponent() {
   const [leaderboardData, setLeaderboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -467,6 +324,44 @@ function LeaderboardsComponent() {
     
     console.log('No recognizable structure, using fallback');
     return getFallbackData();
+  };
+
+  const getFallbackData = () => {
+    return {
+      topRebirths: [
+        { rank: 1, username: "ProWalkerX", value: 892 },
+        { rank: 2, username: "PizzaMaster", value: 756 },
+        { rank: 3, username: "SpeedDemon", value: 689 },
+        { rank: 4, username: "ChillWalker", value: 567 },
+        { rank: 5, username: "AFKEnthusiast", value: 456 }
+      ],
+      topPlaytime: [
+        { rank: 1, username: "ChillWalker", value: "1245h" },
+        { rank: 2, username: "ProWalkerX", value: "987h" },
+        { rank: 3, username: "PizzaMaster", value: "856h" },
+        { rank: 4, username: "SpeedDemon", value: "789h" },
+        { rank: 5, username: "AFKEnthusiast", value: "654h" }
+      ],
+      topCompletions: [
+        { rank: 1, username: "ProWalkerX", value: 1256 },
+        { rank: 2, username: "SpeedDemon", value: 987 },
+        { rank: 3, username: "PizzaMaster", value: 856 },
+        { rank: 4, username: "ChillWalker", value: 745 },
+        { rank: 5, username: "CompletionsKing", value: 632 }
+      ],
+      fastest: [
+        { rank: 1, username: "SpeedDemon", value: "01:45" },
+        { rank: 2, username: "ProWalkerX", value: "01:52" },
+        { rank: 3, username: "QuickFinish", value: "01:58" },
+        { rank: 4, username: "PizzaMaster", value: "02:05" },
+        { rank: 5, username: "FastWalker", value: "02:12" }
+      ],
+      _metadata: {
+        source: 'fallback',
+        timestamp: new Date().toISOString(),
+        connected: false
+      }
+    };
   };
 
   const LeaderboardTable = ({ title, data, category, valueLabel }) => {
@@ -642,6 +537,423 @@ function LeaderboardsComponent() {
   );
 }
 
+// UPDATED: ProfilePage accepts props
+function ProfilePage({ onLogin, onGoogleLogin, user }) {
+  return (
+    <>
+      <Login 
+        onLogin={onLogin} 
+        onGoogleLogin={onGoogleLogin}
+        user={user}
+      />
+    </>
+  );
+}
+
+// ==================== Components ==================== //
+function Curtain({ onCloseComplete, onOpenComplete }) {
+  return (
+    <div className="curtain-container">
+      <motion.div
+        className="curtain"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        exit={{ scaleY: 0 }}
+        transition={{
+          duration: 0.6,
+          ease: "easeInOut"
+        }}
+        onAnimationComplete={(definition) => {
+          if (definition === "animate") {
+            onCloseComplete?.();
+            setTimeout(() => {
+              onOpenComplete?.();
+            }, 300);
+          }
+        }}
+      />
+    </div>
+  )
+}
+
+// UPDATED: NavigationBar with user dropdown
+function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const shouldBeWhite = currentPage === "LEADERBOARDS" || currentPage === "PROFILE";
+  
+  const handleUserClick = () => {
+    if (user) {
+      setShowDropdown(!showDropdown);
+    } else {
+      pageChanging("PROFILE");
+    }
+  };
+
+  const handleLogout = () => {
+    onLogout();
+    setShowDropdown(false);
+  };
+
+  return (
+    <div className={`class_NavBar ${shouldBeWhite ? 'nav-white-text' : ''}`}>
+      <nav>
+        <button onClick={() => pageChanging("HOME")}>HOME</button>
+        <button onClick={() => pageChanging("LEADERBOARDS")}>LEADERBOARDS</button>
+        
+        {/* UPDATED: User/Login Button with Dropdown */}
+        <div className="user-menu-container">
+          <button 
+            onClick={handleUserClick}
+            className="user-button"
+            onMouseEnter={() => user && setShowDropdown(true)}
+            onMouseLeave={() => setTimeout(() => setShowDropdown(false), 300)}
+          >
+            {user ? user.username || user.displayName : "LOGIN"}
+          </button>
+          
+          {user && showDropdown && (
+            <div 
+              className="user-dropdown"
+              onMouseEnter={() => setShowDropdown(true)}
+              onMouseLeave={() => setTimeout(() => setShowDropdown(false), 300)}
+            >
+              <div className="dropdown-header">
+                <div className="user-avatar">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.username} />
+                  ) : (
+                    <div className="avatar-placeholder">
+                      {user.username?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="user-info">
+                  <div className="user-name">{user.username || user.displayName}</div>
+                  <div className="user-email">{user.email}</div>
+                </div>
+              </div>
+              <div className="dropdown-divider"></div>
+              <button onClick={handleLogout} className="logout-button">
+                <span className="logout-icon">↪</span>
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>ADMIN PANEL</button>
+      </nav>
+    </div>
+  )
+}
+
+function GameDescription() {
+  const text = "Sometimes, the simple act of walking can be surprisingly therapeutic. Here, that calm experience is taken to the next level — combining relaxation with fun, competition, and a touch of creativity. Enjoy the scenery, climb the leaderboards, and unwind as you walk your way to victory. Are you ready for a relaxing yet competitive adventure? Come and ";
+
+  const words = text.split(" ");
+
+  return (
+    <div className="class_GameDesc">
+      <p>
+        {words.map((word, index) => (
+          <span
+            key={index}
+            style={{ animationDelay: `${index * 0.05}s` }}
+            className="wordAnimation"
+          >
+            {word}&nbsp; 
+          </span>
+        ))}
+      <button className="class_PlayNow"><a href='https://www.roblox.com/games/110035627916808/pizza-walk-gaem-BUG-FIXES'>PLAY NOW!</a></button>
+      </p>
+    </div>
+  )
+}
+
+function RobloxLogo() {
+  return (
+    <div className='class_RobloxLogo'>
+      <img className='rbx_logo_upper' src='\src\assets\RobloxLogo_Upper.png'></img><br></br>
+      <img className='rbx_logo_lower' src='\src\assets\RobloxLogo_Lower.png'></img>
+    </div>
+  )
+}
+
+function BGRects() {
+  return (
+    <div className="imple-grid-bg">
+      <div className="rect_1"></div>
+      <div className="rect_2"></div>
+      <div className="rect_3"></div>
+      <div className="rect_4"></div>
+    </div>
+  );
+}
+
+// UPDATED: Login Component with Google Auth
+function Login({ onLogin, onGoogleLogin, user }) {
+  const [activeTab, setActiveTab] = useState("login");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "", 
+    email: "",
+    rememberMe: false
+  });
+  const [loginStatus, setLoginStatus] = useState(null);
+
+  // If user is already logged in, show profile
+  if (user) {
+    return (
+      <div className="ProfileContainer">
+        <div className="ProfileHeader">
+          <h2>Welcome Back!</h2>
+          <div className="user-profile-card">
+            <div className="profile-avatar">
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.username} className="avatar-image" />
+              ) : (
+                <div className="avatar-large">
+                  {user.username?.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="profile-info">
+              <h3>{user.username || user.displayName}</h3>
+              <p>{user.email}</p>
+              <div className="profile-meta">
+                <span className="provider-badge">
+                  {user.provider === 'google' ? 'Google Account' : 'Local Account'}
+                </span>
+              </div>
+            </div>
+            <div className="profile-stats">
+              <div className="stat-item">
+                <div className="stat-value">0</div>
+                <div className="stat-label">Games Played</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-value">0</div>
+                <div className="stat-label">Leaderboard Rank</div>
+              </div>
+            </div>
+          </div>
+          <button className="play-game-button">
+            <a href='https://www.roblox.com/games/110035627916808/pizza-walk-gaem-BUG-FIXES'>
+              PLAY PIZZA WALK GAEM
+            </a>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoginStatus({ type: 'loading', message: 'Processing...' });
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    if (activeTab === "login") {
+      // Basic validation
+      if (!formData.username || !formData.password) {
+        setLoginStatus({ type: 'error', message: 'Please fill in all fields' });
+        return;
+      }
+      
+      // Simulate successful login
+      const userData = {
+        id: Date.now(),
+        username: formData.username,
+        email: formData.username.includes('@') ? formData.username : `${formData.username}@pizzawalk.com`,
+        provider: 'local',
+        createdAt: new Date().toISOString()
+      };
+      
+      onLogin(userData);
+      setLoginStatus({ type: 'success', message: 'Login successful!' });
+      
+      // Clear form
+      setFormData({
+        username: "",
+        password: "", 
+        email: "",
+        rememberMe: false
+      });
+      
+    } else {
+      // Registration
+      if (!formData.username || !formData.password || !formData.email) {
+        setLoginStatus({ type: 'error', message: 'Please fill in all fields' });
+        return;
+      }
+      
+      const userData = {
+        id: Date.now(),
+        username: formData.username,
+        email: formData.email,
+        provider: 'local',
+        createdAt: new Date().toISOString()
+      };
+      
+      onLogin(userData);
+      setLoginStatus({ type: 'success', message: 'Registration successful!' });
+      
+      // Clear form
+      setFormData({
+        username: "",
+        password: "", 
+        email: "",
+        rememberMe: false
+      });
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    setLoginStatus({ type: 'loading', message: 'Connecting to Google...' });
+    await onGoogleLogin();
+    setLoginStatus({ type: 'success', message: 'Google login successful!' });
+  };
+
+  return (
+    <div className="LoginContainer">
+      <div className="LoginHeader">
+        <button 
+          className={`LoginButton ${activeTab === "login" ? "active" : "inactive"}`}
+          onClick={() => setActiveTab("login")}
+        >
+          Login
+        </button>
+        <button 
+          className={`SignUpButton ${activeTab === "register" ? "active" : "inactive"}`}
+          onClick={() => setActiveTab("register")}
+        >
+          Register
+        </button>
+      </div>
+      
+      <div className="LoginBox">
+        {/* Google Login Button */}
+        <div className="google-login-section">
+          <button 
+            onClick={handleGoogleAuth}
+            className="google-login-button"
+            disabled={loginStatus?.type === 'loading'}
+          >
+            <span className="google-icon">G</span>
+            Continue with Google
+          </button>
+          <div className="divider">
+            <span>or</span>
+          </div>
+        </div>
+        
+        {/* Login Status Message */}
+        {loginStatus && (
+          <div className={`login-status ${loginStatus.type}`}>
+            {loginStatus.message}
+            {loginStatus.type === 'loading' && <span className="loading-dots">...</span>}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="LoginForm">
+          <div className="InputGroup">
+            <label htmlFor="username">
+              {activeTab === "login" ? "Username or Email" : "Username"}
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              placeholder={activeTab === "login" ? "Enter username or email" : "Choose a username"}
+              required
+              disabled={loginStatus?.type === 'loading'}
+            />
+          </div>
+
+          <div className="InputGroup">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Enter your password"
+              required
+              disabled={loginStatus?.type === 'loading'}
+              minLength="6"
+            />
+          </div>
+
+          {activeTab === "login" && (
+            <div className="login-options">
+              <label className="remember-me">
+                <input
+                  type="checkbox"
+                  name="rememberMe"
+                  checked={formData.rememberMe}
+                  onChange={handleInputChange}
+                  disabled={loginStatus?.type === 'loading'}
+                />
+                Remember me
+              </label>
+              <button type="button" className="forgot-password">
+                Forgot password?
+              </button>
+            </div>
+          )}
+
+          {activeTab === "register" && (
+            <div className="InputGroup">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter your email"
+                required
+                disabled={loginStatus?.type === 'loading'}
+              />
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="SubmitButton"
+            disabled={loginStatus?.type === 'loading'}
+          >
+            {loginStatus?.type === 'loading' ? (
+              <span className="button-loading">Processing...</span>
+            ) : (
+              activeTab === "login" ? "Login" : "Register"
+            )}
+          </button>
+        </form>
+        
+        {/* Terms and Conditions */}
+        {activeTab === "register" && (
+          <div className="terms-agreement">
+            <p>By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ==================== ADMIN PANEL ==================== //
 function AdminPage() {
   const [stats, setStats] = useState(null);
@@ -812,11 +1124,11 @@ function AdminPage() {
   const generateLeaderboardSummary = () => {
     return {
       topPlayers: [
-        { rank: 1, username: "ART_CBAPIINK", reborns: 91, playtime: "2h 13m" },
-        { rank: 2, username: "Galactus1234", reborns: 78, playtime: "3h 9m" },
-        { rank: 3, username: "phaze_14", reborns: 75, playtime: "856h" },
-        { rank: 4, username: "AbdAI394", reborns: 33, playtime: "1h 38m" },
-        { rank: 5, username: "elegent360", reborns: 31, playtime: "2h 15m" }
+        { rank: 1, username: "ProWalkerX", reborns: 892, playtime: "1245h" },
+        { rank: 2, username: "PizzaMaster", reborns: 756, playtime: "987h" },
+        { rank: 3, username: "SpeedDemon", reborns: 689, playtime: "856h" },
+        { rank: 4, username: "ChillWalker", reborns: 567, playtime: "1245h" },
+        { rank: 5, username: "AFKEnthusiast", reborns: 456, playtime: "789h" }
       ],
       dailyCompletion: "1,245",
       averageScore: "8,567",
