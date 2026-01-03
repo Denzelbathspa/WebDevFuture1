@@ -577,6 +577,7 @@ function Curtain({ onCloseComplete, onOpenComplete }) {
 }
 
 // UPDATED: NavigationBar with user dropdown
+// FIXED: NavigationBar with click-to-open dropdown
 function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const shouldBeWhite = currentPage === "LEADERBOARDS" || currentPage === "PROFILE";
@@ -594,28 +595,39 @@ function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
     setShowDropdown(false);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showDropdown && !event.target.closest('.user-menu-container')) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showDropdown]);
+
   return (
     <div className={`class_NavBar ${shouldBeWhite ? 'nav-white-text' : ''}`}>
       <nav>
         <button onClick={() => pageChanging("HOME")}>HOME</button>
         <button onClick={() => pageChanging("LEADERBOARDS")}>LEADERBOARDS</button>
         
-        {/* UPDATED: User/Login Button with Dropdown */}
-        <div className="user-menu-container">
+        {/* FIXED: User/Login Button with Click-to-Open Dropdown */}
+        <div className={`user-menu-container ${showDropdown ? 'active' : ''}`}>
           <button 
             onClick={handleUserClick}
             className="user-button"
-            onMouseEnter={() => user && setShowDropdown(true)}
-            onMouseLeave={() => setTimeout(() => setShowDropdown(false), 300)}
           >
             {user ? user.username || user.displayName : "LOGIN"}
           </button>
           
-          {user && showDropdown && (
+          {user && (
             <div 
               className="user-dropdown"
-              onMouseEnter={() => setShowDropdown(true)}
-              onMouseLeave={() => setTimeout(() => setShowDropdown(false), 300)}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="dropdown-header">
                 <div className="user-avatar">

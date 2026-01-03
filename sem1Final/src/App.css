@@ -339,6 +339,8 @@
 
 /* ========== USER MENU & DROPDOWN ========== */
 
+/* ========== USER MENU & DROPDOWN ========== */
+
 .user-menu-container {
   position: relative;
   display: inline-block;
@@ -362,7 +364,7 @@
 
 .user-dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px);
   left: 50%;
   transform: translateX(-50%);
   min-width: 280px;
@@ -374,6 +376,12 @@
   z-index: 1000;
   animation: dropdownFadeIn 0.3s ease-out;
   overflow: hidden;
+  pointer-events: auto;
+  display: none;
+}
+
+.user-menu-container.active .user-dropdown {
+  display: block;
 }
 
 @keyframes dropdownFadeIn {
@@ -402,6 +410,7 @@
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid rgba(255, 122, 48, 0.8);
+  flex-shrink: 0;
 }
 
 .user-avatar img {
@@ -424,6 +433,7 @@
 
 .user-info {
   flex: 1;
+  min-width: 0;
 }
 
 .user-name {
@@ -431,17 +441,23 @@
   font-weight: bold;
   color: white;
   margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-email {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdown-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.1);
-  margin: 0.5rem 0;
+  margin: 0;
 }
 
 .logout-button {
