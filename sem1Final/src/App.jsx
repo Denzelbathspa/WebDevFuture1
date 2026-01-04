@@ -106,10 +106,6 @@ function App() {
 
   const handleGoogleLogin = () => {
     // Google OAuth2 implementation
-    // This is where you'll integrate actual Google OAuth
-    // For now, we'll simulate a Google login
-    
-    // Simulate Google login process
     const googleUser = {
       id: 'google_' + Date.now(),
       username: 'Google User',
@@ -156,7 +152,6 @@ function App() {
         height: isHomePage ? '100%' : 'auto',
         transition: 'filter 0.3s ease'
       }}>
-        {/* UPDATED: Pass user and logout function to NavigationBar */}
         <NavigationBar 
           pageChanging={pageChanging} 
           currentPage={pageCurrent} 

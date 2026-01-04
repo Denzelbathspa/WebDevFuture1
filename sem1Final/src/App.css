@@ -98,6 +98,11 @@
   transform: translateY(20px);
   animation: fadeUp_anim 0.5s forwards;
   animation-delay: 3s;
+  
+  cursor: pointer;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 9999;
 }
 
 .class_PlayNow a {
