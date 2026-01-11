@@ -4,6 +4,10 @@ import cors from 'cors';
 
 const app = express();
 
+// ==================== Login Handler ==================== //
+
+
+// ==================== Leaderboards Handler ==================== //
 app.use(cors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
@@ -28,7 +32,7 @@ app.get('/api/test', (req, res) => {
     });
 });
 
-// ==================== DIAGNOSTIC ENDPOINTS ====================
+// ==================== DIAGNOSTIC ENDPOINTS ==================== //
 app.get('/api/debug-data-store', async (req, res) => {
     console.log('🔍 Debugging ordered data store contents...');
     
