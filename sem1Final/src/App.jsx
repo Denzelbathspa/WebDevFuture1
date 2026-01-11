@@ -245,7 +245,6 @@ function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
         <button onClick={() => pageChanging("HOME")}>HOME</button>
         <button onClick={() => pageChanging("LEADERBOARDS")}>LEADERBOARDS</button>
         
-        {/* FIXED: User/Login Button with Click-to-Open Dropdown */}
         <div className={`user-menu-container ${showDropdown ? 'active' : ''}`}>
           <button 
             onClick={handleUserClick}

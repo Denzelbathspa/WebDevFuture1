@@ -4,16 +4,12 @@ import cors from 'cors';
 
 const app = express();
 
-// ==================== Login Handler ==================== //
-
-
-// ==================== Leaderboards Handler ==================== //
+// ==================== Middleware ==================== //
 app.use(cors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
     credentials: true
 }));
-
 app.use(express.json());
 
 const ROBLOX_API_KEY = process.env.ROBLOX_API_KEY || 'not_set';
@@ -23,113 +19,9 @@ console.log('🔧 Server starting...');
 console.log('Universe ID:', UNIVERSE_ID);
 console.log('API Key:', ROBLOX_API_KEY ? 'Set' : 'Not set');
 
-app.get('/api/test', (req, res) => {
-    res.json({ 
-        message: '✅ Server is working!',
-        universeId: UNIVERSE_ID,
-        apiKeyPresent: !!ROBLOX_API_KEY,
-        time: new Date().toISOString()
-    });
-});
-
-// ==================== DIAGNOSTIC ENDPOINTS ==================== //
-app.get('/api/debug-data-store', async (req, res) => {
-    console.log('🔍 Debugging ordered data store contents...');
-    
-    try {
-        const storeName = 'RebirthLeaderboard_A';
-        const url = `https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/ordered-data-stores/${storeName}/scopes/global/entries?max_page_size=5`;
-        
-        console.log(`Testing: ${storeName}`);
-        console.log(`URL: ${url}`);
-        console.log(`API Key present: ${ROBLOX_API_KEY ? 'Yes' : 'No'}`);
-        
-        const response = await fetch(url, {
-            headers: {
-                'x-api-key': ROBLOX_API_KEY,
-                'Accept': 'application/json'
-            }
-        });
-        
-        console.log(`Response Status: ${response.status} ${response.statusText}`);
-        
-        const responseText = await response.text();
-        console.log(`Raw Response: ${responseText.substring(0, 500)}`);
-        
-        try {
-            const data = JSON.parse(responseText);
-            console.log('Parsed JSON:', JSON.stringify(data, null, 2));
-            
-            res.json({
-                success: true,
-                status: response.status,
-                dataStore: storeName,
-                dataStoreEntries: data.dataStoreEntries || [],
-                entryCount: data.dataStoreEntries ? data.dataStoreEntries.length : 0,
-                rawResponse: data
-            });
-        } catch (parseError) {
-            res.json({
-                success: false,
-                status: response.status,
-                rawResponse: responseText,
-                parseError: parseError.message
-            });
-        }
-        
-    } catch (error) {
-        console.error('Debug error:', error);
-        res.json({
-            error: error.message,
-            stack: error.stack
-        });
-    }
-});
-
-app.get('/api/list-ordered-stores', async (req, res) => {
-    console.log('📋 Listing ALL ordered data stores...');
-    
-    try {
-        const url = `https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/ordered-data-stores`;
-        
-        const response = await fetch(url, {
-            headers: {
-                'x-api-key': ROBLOX_API_KEY,
-                'Accept': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        }
-        
-        const data = await response.json();
-        
-        console.log('Found ordered data stores:');
-        if (data.orderedDataStores && data.orderedDataStores.length > 0) {
-            data.orderedDataStores.forEach((store, i) => {
-                console.log(`${i + 1}. ${store.name}`);
-            });
-        } else {
-            console.log('No ordered data stores found!');
-        }
-        
-        res.json({
-            success: true,
-            orderedDataStores: data.orderedDataStores || [],
-            count: data.orderedDataStores ? data.orderedDataStores.length : 0,
-            allStoreNames: data.orderedDataStores ? data.orderedDataStores.map(s => s.name) : []
-        });
-        
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
 // ==================== MAIN LEADERBOARDS ENDPOINT ====================
 app.get('/api/leaderboards', async (req, res) => {
-    console.log('📊 Leaderboards endpoint called - REFRESH REQUESTED');
+    console.log('📊 Leaderboards endpoint called');
     
     const startTime = Date.now();
     
@@ -152,7 +44,7 @@ app.get('/api/leaderboards', async (req, res) => {
         
         console.log('🔄 Fetching ordered leaderboard data...');
         
-        // Define all four ordered data stores (keep your existing structure)
+        // Define all four ordered data stores
         const orderedDataStores = [
             { name: 'RebirthLeaderboard_A', key: 'topRebirths', sortOrder: 'DESCENDING', minValue: 1 },
             { name: 'FastestTimeLeaderboard_A', key: 'fastest', sortOrder: 'ASCENDING', minValue: 0 },
@@ -162,13 +54,10 @@ app.get('/api/leaderboards', async (req, res) => {
         
         // Fetch all four data stores in parallel
         const fetchPromises = orderedDataStores.map(async (store) => {
-            console.log(`📥 Fetching ${store.name} (${store.sortOrder})...`);
+            console.log(`📥 Fetching ${store.name}...`);
             
-            // Convert sortOrder to orderBy parameter
             const orderByParam = store.sortOrder === 'DESCENDING' ? 'value desc' : 'value';
             const url = `https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/ordered-data-stores/${store.name}/scopes/global/entries?orderBy=${encodeURIComponent(orderByParam)}&maxPageSize=100`;
-            
-            console.log(`URL: ${url}`);
             
             try {
                 const response = await fetch(url, {
@@ -179,25 +68,18 @@ app.get('/api/leaderboards', async (req, res) => {
                 });
                 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.log(`❌ ${store.name} failed: ${response.status}`, errorText.substring(0, 100));
+                    console.log(`❌ ${store.name} failed: ${response.status}`);
                     return { key: store.key, data: [], error: `HTTP ${response.status}` };
                 }
                 
                 const data = await response.json();
                 
-                // Check for orderedDataStoreEntries
                 if (!data.orderedDataStoreEntries || data.orderedDataStoreEntries.length === 0) {
                     console.log(`ℹ️ ${store.name}: No entries found`);
                     return { key: store.key, data: [] };
                 }
                 
                 console.log(`✅ ${store.name}: Found ${data.orderedDataStoreEntries.length} entries`);
-                
-                // Debug: Show first few values to verify ordering
-                const firstThree = data.orderedDataStoreEntries.slice(0, 3).map(e => e.value);
-                console.log(`First 3 values: ${firstThree.join(', ')}`);
-                console.log(`Expected order: ${store.sortOrder === 'DESCENDING' ? 'highest first' : 'lowest first'}`);
                 
                 // Filter for minimum value
                 const filteredEntries = data.orderedDataStoreEntries.filter(entry => entry.value > store.minValue);
@@ -311,7 +193,6 @@ app.get('/api/leaderboards', async (req, res) => {
 // Helper function to format values based on data store type
 function formatLeaderboardValue(dataStoreName, rawValue) {
     if (rawValue === null || rawValue === undefined) {
-        // Return placeholder values if no real data
         if (dataStoreName === 'PlayTime_A') {
             return "0m";
         }
@@ -321,11 +202,9 @@ function formatLeaderboardValue(dataStoreName, rawValue) {
         return 0;
     }
     
-    // Convert to number for calculations
     const numValue = Number(rawValue);
     
     if (dataStoreName === 'PlayTime_A') {
-        // Convert seconds to minutes
         const minutes = Math.floor(numValue / 60);
         const hours = Math.floor(minutes / 60);
         
@@ -337,18 +216,13 @@ function formatLeaderboardValue(dataStoreName, rawValue) {
     }
     
     if (dataStoreName === 'FastestTimeLeaderboard_A') {
-        // Check if value is in seconds (like 2, 35 from your data) or milliseconds
-        // Your data shows values like 2 and 35, which are likely seconds
         let totalSeconds;
         
         if (numValue < 100) {
-            // Small numbers (2, 35) - assume seconds
             totalSeconds = numValue;
         } else if (numValue < 60000) {
-            // Medium numbers (2000, 35000) - assume milliseconds
             totalSeconds = Math.floor(numValue / 1000);
         } else {
-            // Large numbers - assume milliseconds
             totalSeconds = Math.floor(numValue / 1000);
         }
         
@@ -365,7 +239,6 @@ function formatLeaderboardValue(dataStoreName, rawValue) {
         }
     }
     
-    // For rebirths and completions, return the number
     return numValue;
 }
 
@@ -383,7 +256,7 @@ async function getUsernameFromUserId(userId) {
             return userData.name || `Player_${userId.substring(0, 6)}`;
         }
     } catch (error) {
-        // Silently fail and return fallback
+        // Silently fail
     }
     
     return `Player_${userId.substring(0, 6)}`;
@@ -442,123 +315,16 @@ function getFallbackData() {
     };
 }
 
-// UPDATED: Force Roblox test endpoint that fetches all four ordered data stores
-app.get('/api/force-roblox-test', async (req, res) => {
-    console.log('🔬 Force testing Roblox API for all four ordered data stores...');
-    
-    if (!ROBLOX_API_KEY || ROBLOX_API_KEY === 'not_set') {
-        return res.json({ error: 'API key not set in .env file' });
-    }
-    
-    if (!UNIVERSE_ID || UNIVERSE_ID === 'not_set') {
-        return res.json({ error: 'Universe ID not set in .env file' });
-    }
-    
-    const orderedDataStores = [
-        'RebirthLeaderboard_A',
-        'FastestTimeLeaderboard_A', 
-        'PlayTime_A',
-        'Completions_A'
-    ];
-    
-    const results = [];
-    
-    for (const storeName of orderedDataStores) {
-        try {
-            const url = `https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/ordered-data-stores/${storeName}/scopes/global/entries`;
-            
-            console.log(`Testing: ${storeName}`);
-            console.log(`URL: ${url}`);
-            
-            const response = await fetch(url, {
-                headers: {
-                    'x-api-key': ROBLOX_API_KEY,
-                    'Accept': 'application/json'
-                }
-            });
-            
-            const responseText = await response.text();
-            
-            results.push({
-                dataStore: storeName,
-                status: response.status,
-                statusText: response.statusText,
-                url: url,
-                response: responseText.substring(0, 500),
-                success: response.ok
-            });
-            
-            console.log(`  Status: ${response.status} ${response.ok ? '✅' : '❌'}`);
-            
-        } catch (error) {
-            results.push({
-                dataStore: storeName,
-                error: error.message,
-                success: false
-            });
-            console.log(`  Error: ${error.message}`);
-        }
-        
-        // Small delay between requests
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    
-    res.json({
-        apiKeyPreview: ROBLOX_API_KEY.substring(0, 20) + '...',
-        universeId: UNIVERSE_ID,
-        results: results,
-        timestamp: new Date().toISOString()
-    });
-});
-
-app.get('/api/clear-cache', (req, res) => {
-    console.log('🧹 Cache cleared manually');
-    res.json({
-        message: 'Server cache cleared',
-        timestamp: new Date().toISOString()
-    });
-});
-
-app.get('/api/status', (req, res) => {
-    res.json({
-        server: 'running',
-        port: PORT,
-        universeId: UNIVERSE_ID,
-        apiKeyConfigured: ROBLOX_API_KEY !== 'not_set',
-        apiKeyLength: ROBLOX_API_KEY.length,
-        timestamp: new Date().toISOString()
-    });
-});
-
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`
     🚀 Server running: http://localhost:${PORT}
     
-    Test endpoints:
-    • http://localhost:${PORT}/api/test
+    Available endpoint:
     • http://localhost:${PORT}/api/leaderboards
-    • http://localhost:${PORT}/api/force-roblox-test
-    • http://localhost:${PORT}/api/status
-    • http://localhost:${PORT}/api/debug-data-store
-    • http://localhost:${PORT}/api/list-ordered-stores
-    • http://localhost:${PORT}/api/clear-cache
-    
-    React app should fetch from: http://localhost:${PORT}/api/leaderboards
     
     🔑 Current configuration:
     - Universe ID: ${UNIVERSE_ID}
     - API Key: ${ROBLOX_API_KEY === 'not_set' ? 'NOT SET' : 'SET'}
-    
-    🔬 Force test will check all four ordered data stores:
-    - RebirthLeaderboard_A
-    - FastestTimeLeaderboard_A
-    - PlayTime_A
-    - Completions_A
-    
-    🔍 Diagnostic endpoints:
-    - /api/debug-data-store: Check raw API response for RebirthLeaderboard_A
-    - /api/list-ordered-stores: List all ordered data stores in your universe
     `);
 });
-

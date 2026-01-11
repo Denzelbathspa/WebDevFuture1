@@ -50,7 +50,7 @@ export class BackgroundManager {
 
   createShapes() {
     this.shapes = [];
-    const shapeCount = 64;
+    const shapeCount = 32;
     
     // Calculate size based on screen dimensions
     const minScreenSize = Math.min(this.canvas.width, this.canvas.height);
@@ -78,11 +78,9 @@ export class BackgroundManager {
 
   getRandomColor() {
     const colors = [
-      'rgba(255, 122, 48, 0.3)',    // Orange
-      'rgba(70, 92, 136, 0.3)',     // Blue
-      'rgba(233, 227, 223, 0.25)',  // White
-      'rgba(76, 175, 80, 0.3)',     // Green
-      'rgba(156, 39, 176, 0.3)',    // Purple
+      'rgba(255, 122, 48, 0.8)',    // Orange
+      'rgba(70, 92, 136, 0.8)',     // Blue
+      'rgba(233, 227, 223, 0.5)',  // White
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   }

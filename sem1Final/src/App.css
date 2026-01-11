@@ -253,6 +253,7 @@
 .LoginHeader {
   width: 40%;
   display: flex;
+  min-width: 300px;
 }
 
 .LoginContainer .LoginButton, .SignUpButton {
@@ -288,16 +289,19 @@
   background-color: rgba(var(--WhiteColor), 1);
   border-top: none;
   width: 40%;
-  height: auto;
+  min-width: 300px;
+  min-height: auto;
   padding: 20px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .LoginForm {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
+  gap: 15px;
+  flex: 1;
 }
 
 .InputGroup {
@@ -319,6 +323,8 @@
   color: rgba(var(--BlackColor), 1);
   font-size: 1.4vw;
   border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .InputGroup input:focus {
@@ -327,7 +333,7 @@
 }
 
 .SubmitButton {
-  max-width: 50%;
+  width: 50%;
   height: auto;
   padding: 12px 24px;
   background-color: rgba(var(--OrangeColor), 1);
@@ -336,16 +342,108 @@
   font-size: 1.4vw;
   cursor: pointer;
   margin-top: 25px;
+  align-self: center;
 }
 
 .SubmitButton:hover {
   background-color: rgba(var(--OrangeColor), 0.8);
 }
 
-/* ========== USER MENU & DROPDOWN ========== */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  font-size: 0.9rem;
+}
+
+.login-status {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin: 10px 0;
+  font-size: 0.95rem;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Developer info box */
+.dev-info {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(0,0,0,0.05);
+  border-radius: 5px;
+  font-size: 0.8rem;
+  color: #666;
+  text-align: center;
+}
+
+/* Security warning */
+.security-warning {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid #ff9800;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  color: #ff9800;
+  text-align: center;
+}
+
+/* ========== RESPONSIVE FIXES ========== */
+/* Tablet */
+@media (max-width: 768px) {
+  .LoginHeader {
+    width: 80%;
+  }
+  
+  .LoginBox {
+    width: 80%;
+  }
+  
+  .LoginContainer .LoginButton, 
+  .LoginContainer .SignUpButton,
+  .InputGroup label,
+  .InputGroup input,
+  .SubmitButton {
+    font-size: 3.5vw;
+  }
+  
+  .SubmitButton {
+    width: 70%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .LoginHeader {
+    width: 95%;
+  }
+  
+  .LoginBox {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .LoginContainer .LoginButton, 
+  .LoginContainer .SignUpButton,
+  .InputGroup label,
+  .InputGroup input,
+  .SubmitButton {
+    font-size: 4.5vw;
+  }
+  
+  .SubmitButton {
+    width: 80%;
+  }
+  
+  .login-options {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}
 
 /* ========== USER MENU & DROPDOWN ========== */
-
 .user-menu-container {
   position: relative;
   display: inline-block;
