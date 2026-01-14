@@ -25,7 +25,6 @@ function App() {
   
   // User Authentication State
   const [user, setUser] = useState(() => {
-    // Check localStorage for existing session
     const savedUser = localStorage.getItem('pizzaWalkUser');
     return savedUser ? JSON.parse(savedUser) : null;
   });
@@ -110,20 +109,6 @@ function App() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Google OAuth2 implementation
-    const googleUser = {
-      id: 'google_' + Date.now(),
-      username: 'Google User',
-      email: 'user@gmail.com',
-      provider: 'google',
-      avatar: 'https://ui-avatars.com/api/?name=Google+User&background=FF5722&color=fff',
-      displayName: 'Google User'
-    };
-    
-    handleLogin(googleUser);
-  };
-
   function getBackgroundColor() {
     switch (pageCurrent) {
       case "LEADERBOARDS": return AestheticBlack;
@@ -170,7 +155,6 @@ function App() {
         {pageCurrent === "PROFILE" && (
           <ProfilePage 
             onLogin={handleLogin}
-            onGoogleLogin={handleGoogleLogin}
             user={user}
           />
         )}

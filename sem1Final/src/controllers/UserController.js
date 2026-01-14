@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 
-// @desc Get all users
+// Get all users
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -10,7 +10,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
-// @desc Create new user
+// Create new user
 export const createUser = async (req, res) => {
   try {
     const user = await User.create(req.body);

@@ -8,12 +8,11 @@ export default function AdminPage() {
   const [activeChart, setActiveChart] = useState('visits');
   const [dataSource, setDataSource] = useState('mock');
 
-  // Initialize with real game data from the provided URL
+  // Initialize with real game data
   useEffect(() => {
     const fetchGameStats = async () => {
       setLoading(true);
       try {
-        // Based on the game data from the provided URL
         const realGameData = {
           gameInfo: {
             name: "Pizza Walk Gaem [BUG FIXES]",
@@ -50,7 +49,7 @@ export default function AdminPage() {
 
   // Generate metrics data based on real game info
   const generateMetricsData = () => {
-    const baseVisits = 5110; // From game URL
+    const baseVisits = 5110;
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
     
     return {
@@ -60,7 +59,7 @@ export default function AdminPage() {
         daily: generateTimeSeriesData(baseVisits, days, 50, 150)
       },
       activePlayers: {
-        current: 0, // Actual current players from URL
+        current: 0,
         peak: 24,
         average: 8,
         hourly: Array.from({ length: 24 }, (_, i) => ({

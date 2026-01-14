@@ -119,8 +119,7 @@ export default function Login({ onLogin, user }) {
           return;
         }
         
-        // IMPORTANT: Check password (plain text comparison for now)
-        // In production, you should hash passwords and use bcrypt.compare()
+        // Check password
         if (foundUser.password !== formData.password) {
           setLoginStatus({ type: 'error', message: 'Incorrect password' });
           return;
@@ -196,7 +195,7 @@ export default function Login({ onLogin, user }) {
           body: JSON.stringify({
             name: formData.username,
             email: formData.email,
-            password: formData.password  // Sending plain password (will be stored as plain text)
+            password: formData.password
           }),
         });
         
