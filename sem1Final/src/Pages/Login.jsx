@@ -7,7 +7,7 @@ export default function Login({ onLogin, user }) {
     username: "",
     password: "", 
     email: "",
-    rememberMe: false
+    admin: false
   });
   const [loginStatus, setLoginStatus] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
@@ -18,7 +18,7 @@ export default function Login({ onLogin, user }) {
     const fetchUsers = async () => {
       try {
         setIsLoadingUsers(true);
-        const PORT = import.meta.env.MONGO_PORT || 5000;
+        const PORT = import.meta.env.MONGO_PORT || 5069;
         const response = await fetch(`http://localhost:${PORT}/api/users`);
         
         if (!response.ok) {
@@ -131,7 +131,8 @@ export default function Login({ onLogin, user }) {
           username: foundUser.name,
           email: foundUser.email,
           createdAt: foundUser.createdAt,
-          provider: 'local'
+          provider: 'local',
+          admin: foundUser.admin
         });
         
         setLoginStatus({ type: 'success', message: 'Login successful!' });
@@ -186,7 +187,7 @@ export default function Login({ onLogin, user }) {
         }
         
         // Create new user via POST request with password
-        const PORT = import.meta.env.MONGO_PORT || 5000;
+        const PORT = import.meta.env.MONGO_PORT || 5069;
         const response = await fetch(`http://localhost:${PORT}/api/users`, {
           method: 'POST',
           headers: {
@@ -215,7 +216,8 @@ export default function Login({ onLogin, user }) {
           username: newUser.name,
           email: newUser.email,
           createdAt: newUser.createdAt,
-          provider: 'local'
+          provider: 'local',
+          admin: newUser.admin
         });
         
         setLoginStatus({ type: 'success', message: 'Registration successful!' });

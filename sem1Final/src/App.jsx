@@ -104,9 +104,7 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('pizzaWalkUser');
-    if (pageCurrent === "PROFILE") {
-      pageChanging("HOME");
-    }
+    pageChanging("HOME");
   };
 
   function getBackgroundColor() {
@@ -196,6 +194,10 @@ function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const shouldBeWhite = currentPage === "LEADERBOARDS" || currentPage === "PROFILE";
   
+  // Check if user is admin
+  console.log(user);
+  const isAdmin = user && user.admin === true;
+
   const handleUserClick = () => {
     if (user) {
       setShowDropdown(!showDropdown);
@@ -209,7 +211,6 @@ function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
     setShowDropdown(false);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showDropdown && !event.target.closest('.user-menu-container')) {
@@ -266,7 +267,12 @@ function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
           )}
         </div>
         
-        <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>ADMIN PANEL</button>
+        {/* Only show Admin button if user is admin */}
+        {isAdmin && (
+          <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>
+            ADMIN PANEL
+          </button>
+        )}
       </nav>
     </div>
   )

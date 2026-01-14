@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/fonsi-class-act";
+    const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/api";
     console.log("Connecting to MongoDB:", mongoURI);
     
     await mongoose.connect(mongoURI);
