@@ -1,0 +1,45 @@
+{
+  "homepage": "https:/Denzelbathspa.github.io/WebDevFuture1/",
+  "name": "sem1-final",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "server": "nodemon src/app.js",
+    "leaderboards": "nodemon src/JS/Leaderboards_server.js",
+    "client": "vite",
+    "dev": "concurrently -n \"API,LEADERBOARDS,CLIENT\" -c \"green,yellow,blue\" \"npm run server\" \"npm run leaderboards\" \"npm run client\"",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist -r https://github.com/Denzelbathspa/WebDevFuture1.git -b gh-pages"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "framer-motion": "^12.23.24",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.1.2",
+    "node-fetch": "^2.7.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "baseline-browser-mapping": "^2.9.14",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    "gh-pages": "^6.3.0",
+    "globals": "^16.4.0",
+    "nodemon": "^3.1.11",
+    "vite": "^7.1.7"
+  }
+}
