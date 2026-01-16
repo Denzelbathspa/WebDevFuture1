@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist --git-dir=.git --work-tree=."
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "concurrently": "^9.2.1",
