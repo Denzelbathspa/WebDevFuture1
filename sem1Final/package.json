@@ -1,4 +1,5 @@
 {
+  "homepage": "https:/Denzelbathspa.github.io/WebDevFuture1",
   "name": "sem1-final",
   "private": true,
   "version": "0.0.0",
@@ -11,7 +12,9 @@
     "dev": "concurrently -n \"API,LEADERBOARDS,CLIENT\" -c \"green,yellow,blue\" \"npm run server\" \"npm run leaderboards\" \"npm run client\"",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "concurrently": "^9.2.1",
