@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -r https://github.com/Denzelbathspa/WebDevFuture1.git -b gh-pages"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "concurrently": "^9.2.1",
