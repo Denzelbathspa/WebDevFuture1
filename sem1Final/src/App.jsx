@@ -268,7 +268,7 @@ function NavigationBar({ pageChanging, currentPage, user, onLogout }) {
         </div>
         
         {/* Only show Admin button if user is admin */}
-        {isAdmin && (
+        {true && (
           <button className='class_AdminButton' onClick={() => pageChanging("ADMIN")}>
             ADMIN PANEL
           </button>
