@@ -1,4 +1,6 @@
 import '../App.css'
+import RobloxLogoUpper from '../assets/RobloxLogo_Upper.png';
+import RobloxLogoLower from '../assets/RobloxLogo_Lower.png';
 
 export default function HomePage() {
   return (
@@ -37,8 +39,8 @@ function GameDescription() {
 function RobloxLogo() {
   return (
     <div className='class_RobloxLogo'>
-      <img className='rbx_logo_upper' src='\src\assets\RobloxLogo_Upper.png'></img><br></br>
-      <img className='rbx_logo_lower' src='\src\assets\RobloxLogo_Lower.png'></img>
+      <img className='rbx_logo_upper' src={RobloxLogoUpper}></img><br></br>
+      <img className='rbx_logo_lower' src={RobloxLogoLower}></img>
     </div>
   )
 }
